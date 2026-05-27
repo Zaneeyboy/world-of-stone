@@ -38,13 +38,7 @@ export default function AboutSection() {
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center'>
           {/* Left — text */}
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className='flex items-center gap-3 mb-6'
-            >
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className='flex items-center gap-3 mb-6'>
               <div className='h-px w-8 bg-gold' />
               <span className='text-[11px] font-semibold tracking-[0.28em] uppercase text-gold'>Our Legacy</span>
             </motion.div>
@@ -70,10 +64,8 @@ export default function AboutSection() {
               transition={{ duration: 0.55, delay: 0.16 }}
               className='text-foreground-muted text-[0.95rem] leading-[1.85] mb-8 max-w-lg'
             >
-              World of Stone was built on a single conviction: that exceptional spaces deserve
-              exceptional materials. Since our founding, we have partnered with architects,
-              designers, and homeowners who share that belief — delivering over 500 projects
-              without ever compromising on quality.
+              World of Stone was built on a single conviction: that exceptional spaces deserve exceptional materials. Since our founding, we have partnered with architects, designers, and homeowners
+              who share that belief — delivering over 500 projects without ever compromising on quality.
             </motion.p>
 
             <motion.p
@@ -83,21 +75,11 @@ export default function AboutSection() {
               transition={{ duration: 0.55, delay: 0.22 }}
               className='text-foreground-muted text-[0.95rem] leading-[1.85] mb-12 max-w-lg'
             >
-              We source directly from the world's finest quarries, maintain an inventory of
-              200+ stone varieties, and handle every step — from slab selection to final
-              installation — in-house.
+              We source directly from the world's finest quarries, maintain an inventory of 200+ stone varieties, and handle every step — from slab selection to final installation — in-house.
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <Link
-                href='/about'
-                className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-foreground hover:text-gold transition-colors duration-200'
-              >
+            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
+              <Link href='/about' className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-foreground hover:text-gold transition-colors duration-200'>
                 <span>Our Story</span>
                 <HiArrowRight size={15} className='group-hover:translate-x-1 transition-transform duration-200' />
               </Link>
@@ -119,13 +101,8 @@ export default function AboutSection() {
                 { value: '500+', label: 'Projects' },
                 { value: '200+', label: 'Varieties' },
               ].map((s, i) => (
-                <div
-                  key={s.label}
-                  className={`py-8 text-center ${i < 2 ? 'border-r border-border' : ''}`}
-                >
-                  <p className='font-display text-[2.4rem] font-semibold text-foreground leading-none mb-1.5'>
-                    {s.value}
-                  </p>
+                <div key={s.label} className={`py-8 text-center ${i < 2 ? 'border-r border-border' : ''}`}>
+                  <p className='font-display text-[2.4rem] font-semibold text-foreground leading-none mb-1.5'>{s.value}</p>
                   <p className='text-[10px] text-foreground-muted uppercase tracking-[0.2em]'>{s.label}</p>
                 </div>
               ))}
@@ -145,9 +122,7 @@ export default function AboutSection() {
                   <div className='flex items-start gap-5'>
                     <div className='w-px self-stretch bg-gold/25 group-hover:bg-gold/70 transition-colors duration-300 shrink-0' />
                     <div>
-                      <h4 className='font-display text-lg font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200'>
-                        {pillar.label}
-                      </h4>
+                      <h4 className='font-display text-lg font-semibold mb-1.5 group-hover:text-gold transition-colors duration-200'>{pillar.label}</h4>
                       <p className='text-sm text-foreground-muted leading-relaxed'>{pillar.desc}</p>
                     </div>
                   </div>

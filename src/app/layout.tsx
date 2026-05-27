@@ -27,11 +27,20 @@ export const metadata: Metadata = {
   },
   description: 'Premium granite, marble, and natural stone materials for construction, kitchens, interiors, and commercial projects. Supplier and installer based in South Africa.',
   keywords: ['granite', 'marble', 'natural stone', 'stone supplier', 'kitchen stone', 'floor tiles', 'stone installer', 'South Africa'],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+    other: [{ rel: 'icon', url: '/favicon.ico' }],
+  },
   openGraph: {
     type: 'website',
     siteName: 'World of Stone',
     title: 'World of Stone — Premium Stone Materials',
     description: 'Premium granite, marble, and natural stone materials for construction, kitchens, interiors, and commercial projects.',
+    images: [{ url: '/android-chrome-512x512.png', width: 512, height: 512 }],
   },
   twitter: {
     card: 'summary_large_image',

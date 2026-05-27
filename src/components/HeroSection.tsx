@@ -62,16 +62,9 @@ export default function HeroSection() {
       <div className='relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-32 lg:py-0 lg:min-h-screen lg:flex lg:items-center'>
         <div className='max-w-2xl'>
           {/* Eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className='flex items-center gap-3 mb-10'
-          >
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className='flex items-center gap-3 mb-10'>
             <div className='h-px w-10 bg-[#b08d57]/60' />
-            <span className='text-[11px] font-semibold tracking-[0.3em] uppercase text-[#b08d57]'>
-              Premium Stone Supplier · South Africa
-            </span>
+            <span className='text-[11px] font-semibold tracking-[0.3em] uppercase text-[#b08d57]'>Premium Stone Supplier · South Africa</span>
           </motion.div>
 
           {/* Headline */}
@@ -81,10 +74,8 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className='font-display text-[3.2rem] md:text-[4.2rem] lg:text-[5rem] font-semibold leading-[1.02] tracking-[-0.01em] mb-6 text-white'
           >
-            Imported Stone Surfaces{' '}
-            <span className='text-stone-gradient italic'>Crafted</span>
-            <br className='hidden md:block' /> for Exceptional{' '}
-            <span className='text-stone-gradient italic'>Spaces</span>
+            Imported Stone Surfaces <span className='text-stone-gradient italic'>Crafted</span>
+            <br className='hidden md:block' /> for Exceptional <span className='text-stone-gradient italic'>Spaces</span>
           </motion.h1>
 
           {/* Sub */}
@@ -94,8 +85,7 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.22 }}
             className='text-[0.95rem] text-white/50 leading-[1.8] max-w-[480px] mb-12'
           >
-            Over 20 years supplying premium granite, marble, quartz, and luxury stone
-            materials for residential and commercial projects across South Africa.
+            Over 20 years supplying premium granite, marble, quartz, and luxury stone materials for residential and commercial projects across South Africa.
           </motion.p>
 
           {/* CTAs */}
@@ -121,24 +111,15 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className='flex items-start gap-10 sm:gap-14'
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.5 }} className='flex items-start gap-10 sm:gap-14'>
             {[
               { value: '200+', label: 'Colors Available' },
               { value: '500+', label: 'Projects Completed' },
               { value: '20+', label: 'Years Experience' },
             ].map((stat, i) => (
               <div key={stat.label} className='flex flex-col'>
-                {i > 0 && (
-                  <div className='hidden' />
-                )}
-                <p className='font-display text-[2.2rem] font-semibold text-white leading-none mb-1.5'>
-                  {stat.value}
-                </p>
+                {i > 0 && <div className='hidden' />}
+                <p className='font-display text-[2.2rem] font-semibold text-white leading-none mb-1.5'>{stat.value}</p>
                 <p className='text-[10px] text-white/35 uppercase tracking-[0.18em]'>{stat.label}</p>
               </div>
             ))}
@@ -154,4 +135,3 @@ export default function HeroSection() {
     </section>
   );
 }
-

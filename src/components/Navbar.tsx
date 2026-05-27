@@ -54,7 +54,10 @@ export default function Navbar() {
 
         {/* CTA */}
         <div className='hidden md:flex items-center gap-4'>
-          <Link href='/contact' className='px-5 py-2 text-sm font-medium border border-[#b08d57]/60 text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all duration-200 tracking-wider uppercase'>
+          <Link
+            href='/contact'
+            className='px-5 py-2 text-sm font-medium border border-[#b08d57]/60 text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all duration-200 tracking-wider uppercase'
+          >
             Get a Quote
           </Link>
         </div>

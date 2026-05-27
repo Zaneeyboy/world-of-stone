@@ -48,13 +48,7 @@ export default function ProcessSection() {
         {/* Header */}
         <div className='flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20'>
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className='flex items-center gap-3 mb-5'
-            >
+            <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className='flex items-center gap-3 mb-5'>
               <div className='h-px w-8 bg-[#b08d57]' />
               <span className='text-[11px] font-semibold tracking-[0.28em] uppercase text-[#b08d57]'>How We Work</span>
             </motion.div>
@@ -70,16 +64,8 @@ export default function ProcessSection() {
               <span className='text-stone-gradient italic'>Completed Space</span>
             </motion.h2>
           </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Link
-              href='/contact'
-              className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-[#b08d57] transition-colors duration-200'
-            >
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <Link href='/contact' className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-white/60 hover:text-[#b08d57] transition-colors duration-200'>
               <span>Start Your Project</span>
               <HiArrowRight size={14} className='group-hover:translate-x-1 transition-transform duration-200' />
             </Link>
@@ -99,24 +85,16 @@ export default function ProcessSection() {
             >
               {/* Step number */}
               <div className='flex items-end gap-3 mb-7'>
-                <span className='font-display text-[3rem] font-semibold text-[#b08d57]/20 group-hover:text-[#b08d57]/40 transition-colors duration-300 leading-none select-none'>
-                  {step.number}
-                </span>
+                <span className='font-display text-[3rem] font-semibold text-[#b08d57]/20 group-hover:text-[#b08d57]/40 transition-colors duration-300 leading-none select-none'>{step.number}</span>
                 {/* Connecting line (hidden on last) */}
-                {i < steps.length - 1 && (
-                  <div className='hidden lg:block flex-1 h-px bg-white/[0.06] mb-4' />
-                )}
+                {i < steps.length - 1 && <div className='hidden lg:block flex-1 h-px bg-white/[0.06] mb-4' />}
               </div>
 
               {/* Gold accent bar */}
               <div className='w-8 h-px bg-[#b08d57]/40 group-hover:bg-[#b08d57]/80 mb-5 transition-colors duration-300' />
 
-              <h3 className='font-display text-xl font-semibold text-white mb-4 group-hover:text-[#b08d57] transition-colors duration-300'>
-                {step.title}
-              </h3>
-              <p className='text-white/40 text-sm leading-[1.8] group-hover:text-white/55 transition-colors duration-300'>
-                {step.desc}
-              </p>
+              <h3 className='font-display text-xl font-semibold text-white mb-4 group-hover:text-[#b08d57] transition-colors duration-300'>{step.title}</h3>
+              <p className='text-white/40 text-sm leading-[1.8] group-hover:text-white/55 transition-colors duration-300'>{step.desc}</p>
             </motion.div>
           ))}
         </div>

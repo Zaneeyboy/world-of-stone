@@ -41,13 +41,9 @@ export default function MaterialCategories() {
               <div className='h-px w-8 bg-[#b08d57]' />
               <span className='text-[11px] font-semibold tracking-[0.28em] uppercase text-[#b08d57]'>Our Materials</span>
             </div>
-            <h2 className='font-display text-4xl md:text-5xl font-semibold text-white leading-tight'>
-              Browse by Category
-            </h2>
+            <h2 className='font-display text-4xl md:text-5xl font-semibold text-white leading-tight'>Browse by Category</h2>
           </div>
-          <p className='text-white/40 text-sm leading-relaxed max-w-xs md:text-right'>
-            Each material type carries its own character. Discover the one that defines your space.
-          </p>
+          <p className='text-white/40 text-sm leading-relaxed max-w-xs md:text-right'>Each material type carries its own character. Discover the one that defines your space.</p>
         </div>
       </div>
 
@@ -78,15 +74,9 @@ export default function MaterialCategories() {
                 {/* Gold line that expands on hover */}
                 <div className='h-px bg-[#b08d57]/30 group-hover:bg-[#b08d57]/70 mb-5 transition-colors duration-300 w-8 group-hover:w-12' style={{ transitionProperty: 'width, background-color' }} />
 
-                <h3 className='font-display text-3xl font-semibold text-white mb-3 group-hover:text-[#b08d57] transition-colors duration-300'>
-                  {cat.name}
-                </h3>
-                <p className='text-white/40 text-[0.8rem] leading-relaxed mb-4 group-hover:text-white/60 transition-colors duration-300'>
-                  {cat.desc}
-                </p>
-                <p className='text-[10px] text-[#b08d57]/60 uppercase tracking-[0.2em] group-hover:text-[#b08d57] transition-colors duration-300'>
-                  {cat.detail}
-                </p>
+                <h3 className='font-display text-3xl font-semibold text-white mb-3 group-hover:text-[#b08d57] transition-colors duration-300'>{cat.name}</h3>
+                <p className='text-white/40 text-[0.8rem] leading-relaxed mb-4 group-hover:text-white/60 transition-colors duration-300'>{cat.desc}</p>
+                <p className='text-[10px] text-[#b08d57]/60 uppercase tracking-[0.2em] group-hover:text-[#b08d57] transition-colors duration-300'>{cat.detail}</p>
               </div>
 
               {/* Bottom border accent */}

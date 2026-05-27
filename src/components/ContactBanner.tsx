@@ -31,8 +31,7 @@ export default function ContactBanner() {
         </h2>
 
         <p className='text-white/45 text-[0.95rem] max-w-lg mx-auto leading-[1.8] mb-12'>
-          From material selection to professional installation — speak with our team today
-          for a consultation and quote tailored to your project.
+          From material selection to professional installation — speak with our team today for a consultation and quote tailored to your project.
         </p>
 
         <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
@@ -57,4 +56,3 @@ export default function ContactBanner() {
     </section>
   );
 }
-
