@@ -1,15 +1,16 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #f8f7f4;
+  /* Brief palette — Stone White / Obsidian Black / Luxury Bronze */
+  --background: #f5f3ef;      /* Stone White */
   --surface: #ffffff;
   --surface-2: #edecea;
-  --border: #dedbd4;
-  --gold: #2a2724;
-  --gold-light: #4a4540;
+  --border: #d8d4cf;          /* Soft Concrete Grey */
+  --gold: #b08d57;            /* Luxury Bronze / Gold accent */
+  --gold-light: #c9a97a;      /* Lighter bronze */
   --stone: #8c8a82;
   --stone-light: #c8c5bc;
-  --foreground: #1a1817;
+  --foreground: #2d2d30;      /* Graphite Grey */
   --foreground-muted: #706c65;
 }
 
@@ -66,7 +67,7 @@ body {
 
 /* Charcoal shimmer text (for light sections) */
 .text-gold-gradient {
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  background: linear-gradient(135deg, #8a6d3e 0%, #b08d57 40%, #d4b07a 60%, #b08d57 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

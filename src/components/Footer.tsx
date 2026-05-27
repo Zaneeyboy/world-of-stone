@@ -5,13 +5,13 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '27000000000'
 
 export default function Footer() {
   return (
-    <footer className='bg-[#111110] border-t border-white/10 mt-auto'>
+    <footer className='bg-[#0F0F10] border-t border-white/[0.07] mt-auto'>
       <div className='max-w-7xl mx-auto px-6 lg:px-8 py-16'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'>
           {/* Brand */}
           <div className='lg:col-span-2'>
             <div className='flex items-center gap-3 mb-4'>
-              <span className='w-8 h-8 bg-white flex items-center justify-center text-[#111110] font-bold text-sm font-display'>W</span>
+              <span className='w-8 h-8 bg-[#b08d57] flex items-center justify-center text-white font-bold text-sm font-display'>W</span>
               <span className='font-display text-xl font-semibold tracking-wide text-white'>World of Stone</span>
             </div>
             <p className='text-white/45 text-sm leading-relaxed max-w-xs'>
@@ -60,7 +60,7 @@ export default function Footer() {
           <div>
             <h3 className='text-xs font-semibold tracking-widest uppercase text-white/35 mb-5'>Materials</h3>
             <ul className='flex flex-col gap-3'>
-              {['Granite', 'Marble', 'Quartz', 'Limestone', 'Travertine', 'Sandstone', 'Slate'].map((mat) => (
+              {['Granite', 'Marble', 'Quartz', 'Exotic Stone', 'Sandstone', 'Slate'].map((mat) => (
                 <li key={mat}>
                   <Link href={`/catalog?material=${mat.toLowerCase()}`} className='text-sm text-white/45 hover:text-white transition-colors'>
                     {mat}
@@ -73,7 +73,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className='mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4'>
-          <p className='text-xs text-white/30'>&copy; {new Date().getFullYear()} World of Stone. All rights reserved.</p>
+          <p className='text-xs text-white/25'>&copy; {new Date().getFullYear()} World of Stone. All rights reserved.</p>
           <p className='text-xs text-white/30'>
             Built by{' '}
             <a href='https://xenoviatech.com' target='_blank' rel='noopener noreferrer' className='text-white/50 hover:text-white transition-colors'>

@@ -3,8 +3,9 @@ import Footer from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
 import FeaturedMaterials from '@/components/FeaturedMaterials';
 import MaterialCategories from '@/components/MaterialCategories';
-import WhyChooseUs from '@/components/WhyChooseUs';
+import AboutSection from '@/components/AboutSection';
 import RecentProjects from '@/components/RecentProjects';
+import ProcessSection from '@/components/ProcessSection';
 import ContactBanner from '@/components/ContactBanner';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { getFeaturedProducts, getProjects } from '@/lib/firestore';
@@ -26,8 +27,9 @@ export default async function HomePage() {
         <HeroSection />
         <FeaturedMaterials products={featuredProducts} />
         <MaterialCategories />
+        <AboutSection />
         <RecentProjects projects={recentProjects} />
-        <WhyChooseUs />
+        <ProcessSection />
         <ContactBanner />
       </main>
       <Footer />

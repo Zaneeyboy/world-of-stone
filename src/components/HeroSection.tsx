@@ -2,56 +2,76 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaWhatsapp } from 'react-icons/fa';
 import { HiArrowRight } from 'react-icons/hi';
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '27000000000';
-const waMessage = encodeURIComponent("Hi, I'm interested in your stone materials. Could you please tell me more?");
 
 export default function HeroSection() {
   return (
-    <section className='relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0F0E0C]'>
-      {/* Background grid pattern */}
+    <section className='relative min-h-screen flex items-center overflow-hidden bg-[#0F0F10]'>
+      {/* Subtle stone-vein texture overlay */}
       <div
-        className='absolute inset-0'
+        className='absolute inset-0 opacity-[0.03]'
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
+            repeating-linear-gradient(
+              -30deg,
+              transparent,
+              transparent 60px,
+              rgba(255,255,255,1) 60px,
+              rgba(255,255,255,1) 61px
+            ),
+            repeating-linear-gradient(
+              60deg,
+              transparent,
+              transparent 120px,
+              rgba(255,255,255,0.5) 120px,
+              rgba(255,255,255,0.5) 121px
+            )
           `,
-          backgroundSize: '80px 80px',
         }}
       />
 
-      {/* Gradient overlays */}
-      <div className='absolute inset-0 bg-gradient-to-b from-[#0F0E0C] via-[#0F0E0C]/80 to-[#0F0E0C]' />
-      <div className='absolute inset-0 bg-gradient-to-r from-[#0F0E0C]/60 via-transparent to-[#0F0E0C]/60' />
+      {/* Radial glow — top left */}
+      <div className='absolute top-0 left-0 w-[600px] h-[600px] bg-[#b08d57] opacity-[0.04] rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl pointer-events-none' />
+      {/* Radial glow — bottom right */}
+      <div className='absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#b08d57] opacity-[0.03] rounded-full translate-x-1/3 translate-y-1/3 blur-3xl pointer-events-none' />
 
-      {/* Decorative stone slab visual */}
-      <div className='absolute right-0 top-1/2 -translate-y-1/2 w-[45%] h-[70%] hidden lg:block opacity-10'>
-        <div className='w-full h-full bg-gradient-to-br from-white/20 via-white/5 to-transparent' />
-        <div
-          className='absolute inset-0'
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              -45deg,
-              transparent,
-              transparent 2px,
-              rgba(255,255,255,0.03) 2px,
-              rgba(255,255,255,0.03) 4px
-            )`,
-          }}
-        />
+      {/* Gradient vignette */}
+      <div className='absolute inset-0 bg-gradient-to-b from-[#0F0F10]/80 via-transparent to-[#0F0F10]' />
+
+      {/* Right-side decorative stone panel */}
+      <div className='absolute right-0 top-0 bottom-0 w-[42%] hidden lg:flex flex-col'>
+        {/* Stone slab texture blocks */}
+        <div className='flex-1 bg-gradient-to-br from-[#1a1916] to-[#0F0F10] border-l border-white/[0.06]'>
+          <div
+            className='w-full h-full opacity-40'
+            style={{
+              backgroundImage: `
+                radial-gradient(ellipse at 30% 40%, rgba(176,141,87,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.04) 0%, transparent 50%)
+              `,
+            }}
+          />
+        </div>
+        {/* Vertical gold line accent */}
+        <div className='absolute left-0 top-[15%] bottom-[15%] w-px bg-gradient-to-b from-transparent via-[#b08d57]/40 to-transparent' />
       </div>
 
-      {/* Content */}
-      <div className='relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 text-center lg:text-left'>
-        <div className='max-w-3xl'>
-          {/* Tag line */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className='flex items-center gap-3 justify-center lg:justify-start mb-8'>
-            <div className='h-px w-12 bg-white/25' />
-            <span className='text-xs font-semibold tracking-[0.25em] uppercase text-white/45'>Premium Stone Supplier &amp; Installer · South Africa</span>
-            <div className='h-px w-12 bg-white/25' />
+      {/* Main content */}
+      <div className='relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 py-32 lg:py-0 lg:min-h-screen lg:flex lg:items-center'>
+        <div className='max-w-2xl'>
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            className='flex items-center gap-3 mb-10'
+          >
+            <div className='h-px w-10 bg-[#b08d57]/60' />
+            <span className='text-[11px] font-semibold tracking-[0.3em] uppercase text-[#b08d57]'>
+              Premium Stone Supplier · South Africa
+            </span>
           </motion.div>
 
           {/* Headline */}
@@ -59,56 +79,67 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className='font-display text-5xl md:text-6xl lg:text-7xl font-semibold leading-[1.05] tracking-tight mb-6 text-white'
+            className='font-display text-[3.2rem] md:text-[4.2rem] lg:text-[5rem] font-semibold leading-[1.02] tracking-[-0.01em] mb-6 text-white'
           >
-            The World&apos;s Finest <span className='text-stone-gradient'>Natural Stone</span>
-            <br />
-            Materials &amp; <span className='text-stone-gradient'>Installation</span>
+            Imported Stone Surfaces{' '}
+            <span className='text-stone-gradient italic'>Crafted</span>
+            <br className='hidden md:block' /> for Exceptional{' '}
+            <span className='text-stone-gradient italic'>Spaces</span>
           </motion.h1>
 
           {/* Sub */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className='text-base text-white/55 leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10'
+            transition={{ duration: 0.6, delay: 0.22 }}
+            className='text-[0.95rem] text-white/50 leading-[1.8] max-w-[480px] mb-12'
           >
-            Rare granites, marbles, and natural stone surfaces — curated from quarries worldwide. Over 200 varieties available. Supplied and installed for kitchens, flooring, interiors, and commercial
-            projects across South Africa.
+            Over 20 years supplying premium granite, marble, quartz, and luxury stone
+            materials for residential and commercial projects across South Africa.
           </motion.p>
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className='flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start'
+            transition={{ duration: 0.55, delay: 0.34 }}
+            className='flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-20'
           >
-            <Link href='/catalog' className='flex items-center gap-2 px-8 py-4 bg-white text-[#0F0E0C] font-semibold hover:bg-white/90 transition-colors duration-200 text-sm tracking-wider uppercase'>
-              <span>View Materials</span>
-              <HiArrowRight size={16} />
-            </Link>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='flex items-center gap-2 px-8 py-4 border border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white font-semibold transition-all duration-200 text-sm tracking-wider uppercase'
+            <Link
+              href='/catalog'
+              className='group flex items-center gap-3 px-8 py-4 bg-[#b08d57] hover:bg-[#c9a97a] text-white font-semibold text-sm tracking-[0.12em] uppercase transition-colors duration-250'
             >
-              <FaWhatsapp size={18} />
-              <span>WhatsApp Us</span>
-            </a>
+              <span>Explore Materials</span>
+              <HiArrowRight size={15} className='group-hover:translate-x-1 transition-transform duration-200' />
+            </Link>
+            <Link
+              href='/contact'
+              className='flex items-center gap-3 px-8 py-4 border border-white/20 text-white/80 hover:border-white/50 hover:text-white font-medium text-sm tracking-[0.12em] uppercase transition-all duration-250'
+            >
+              Request Consultation
+            </Link>
           </motion.div>
 
           {/* Stats */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className='flex items-center gap-8 mt-16 justify-center lg:justify-start'>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className='flex items-start gap-10 sm:gap-14'
+          >
             {[
+              { value: '200+', label: 'Colors Available' },
               { value: '500+', label: 'Projects Completed' },
-              { value: '20+', label: 'Years of Excellence' },
-              { value: '200+', label: 'Stone Varieties' },
-            ].map((stat) => (
-              <div key={stat.label} className='text-center lg:text-left'>
-                <p className='font-display text-3xl font-semibold text-white'>{stat.value}</p>
-                <p className='text-xs text-white/40 uppercase tracking-wider mt-0.5'>{stat.label}</p>
+              { value: '20+', label: 'Years Experience' },
+            ].map((stat, i) => (
+              <div key={stat.label} className='flex flex-col'>
+                {i > 0 && (
+                  <div className='hidden' />
+                )}
+                <p className='font-display text-[2.2rem] font-semibold text-white leading-none mb-1.5'>
+                  {stat.value}
+                </p>
+                <p className='text-[10px] text-white/35 uppercase tracking-[0.18em]'>{stat.label}</p>
               </div>
             ))}
           </motion.div>
@@ -116,9 +147,11 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className='absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30'>
-        <div className='w-px h-12 bg-gradient-to-b from-transparent to-white animate-pulse' />
+      <div className='absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2'>
+        <span className='text-[9px] text-white/20 uppercase tracking-[0.25em]'>Scroll</span>
+        <div className='w-px h-10 bg-gradient-to-b from-white/20 to-transparent' />
       </div>
     </section>
   );
 }
+

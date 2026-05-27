@@ -30,12 +30,12 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-[#111110] border-b border-white/10 transition-all duration-300 ${scrolled ? 'shadow-lg' : ''}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-[#0F0F10]/95 backdrop-blur-sm border-b border-white/[0.07] transition-all duration-300 ${scrolled ? 'shadow-xl shadow-black/30' : ''}`}>
       <nav className='max-w-7xl mx-auto px-6 lg:px-8 h-18 flex items-center justify-between'>
         {/* Logo */}
         <Link href='/' className='flex items-center gap-3 group'>
-          <span className='w-8 h-8 bg-white flex items-center justify-center text-[#111110] font-bold text-sm font-display'>W</span>
-          <span className='font-display text-xl font-semibold tracking-wide text-white group-hover:text-white/70 transition-colors'>World of Stone</span>
+          <span className='w-8 h-8 bg-[#b08d57] flex items-center justify-center text-white font-bold text-sm font-display'>W</span>
+          <span className='font-display text-xl font-semibold tracking-wide text-white group-hover:text-white/75 transition-colors'>World of Stone</span>
         </Link>
 
         {/* Desktop nav */}
@@ -44,7 +44,7 @@ export default function Navbar() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`text-sm tracking-wider uppercase font-medium transition-colors duration-200 ${pathname === link.href ? 'text-white' : 'text-white/50 hover:text-white'}`}
+                className={`text-sm tracking-wider uppercase font-medium transition-colors duration-200 ${pathname === link.href ? 'text-[#b08d57]' : 'text-white/45 hover:text-white'}`}
               >
                 {link.label}
               </Link>
@@ -54,7 +54,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <div className='hidden md:flex items-center gap-4'>
-          <Link href='/contact' className='px-5 py-2 text-sm font-medium border border-white/40 text-white/90 hover:bg-white hover:text-[#111110] transition-all duration-200 tracking-wider uppercase'>
+          <Link href='/contact' className='px-5 py-2 text-sm font-medium border border-[#b08d57]/60 text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all duration-200 tracking-wider uppercase'>
             Get a Quote
           </Link>
         </div>
@@ -69,7 +69,7 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className='md:hidden bg-[#111110] border-t border-white/10 overflow-hidden'
+            className='md:hidden bg-[#0F0F10] border-t border-white/[0.07] overflow-hidden'
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -78,7 +78,7 @@ export default function Navbar() {
             <ul className='px-6 py-6 flex flex-col gap-5'>
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={`text-base tracking-wider uppercase font-medium transition-colors ${pathname === link.href ? 'text-white' : 'text-white/50 hover:text-white'}`}>
+                  <Link href={link.href} className={`text-base tracking-wider uppercase font-medium transition-colors ${pathname === link.href ? 'text-[#b08d57]' : 'text-white/50 hover:text-white'}`}>
                     {link.label}
                   </Link>
                 </li>
@@ -86,7 +86,7 @@ export default function Navbar() {
               <li>
                 <Link
                   href='/contact'
-                  className='inline-block mt-2 px-5 py-2 text-sm font-medium border border-white/40 text-white/90 hover:bg-white hover:text-[#111110] transition-all duration-200 tracking-wider uppercase'
+                  className='inline-block mt-2 px-5 py-2 text-sm font-medium border border-[#b08d57]/60 text-[#b08d57] hover:bg-[#b08d57] hover:text-white transition-all duration-200 tracking-wider uppercase'
                 >
                   Get a Quote
                 </Link>
