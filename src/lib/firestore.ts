@@ -1,0 +1,191 @@
+import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit, increment, serverTimestamp, Timestamp, QueryConstraint } from 'firebase/firestore';
+import { db } from './firebase';
+import type { Product, Project, Promotion, FilterState, SortOption } from '@/types';
+
+// ─── Collections ──────────────────────────────────────────────────────────────
+const PRODUCTS = 'products';
+const PROJECTS = 'projects';
+const PROMOTIONS = 'promotions';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function tsToMs(ts: Timestamp | number): number {
+  if (ts instanceof Timestamp) return ts.toMillis();
+  return ts;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapProduct(id: string, data: any): Product {
+  return {
+    ...data,
+    id,
+    createdAt: tsToMs(data.createdAt),
+    updatedAt: tsToMs(data.updatedAt),
+    viewCount: data.viewCount ?? 0,
+    inquiryCount: data.inquiryCount ?? 0,
+    hidden: data.hidden ?? false,
+    featured: data.featured ?? false,
+  } as Product;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapProject(id: string, data: any): Project {
+  return {
+    ...data,
+    id,
+    createdAt: tsToMs(data.createdAt),
+    completedAt: data.completedAt ? tsToMs(data.completedAt) : undefined,
+  } as Project;
+}
+
+// ─── Products ──────────────────────────────────────────────────────────────────
+export async function getProducts(filters?: Partial<FilterState>, sort: SortOption = 'newest', limitCount = 24): Promise<Product[]> {
+  const constraints: QueryConstraint[] = [where('hidden', '==', false)];
+
+  if (filters?.materialType) {
+    constraints.push(where('materialType', '==', filters.materialType));
+  }
+  if (filters?.availability) {
+    constraints.push(where('availability', '==', filters.availability));
+  }
+
+  switch (sort) {
+    case 'most_viewed':
+      constraints.push(orderBy('viewCount', 'desc'));
+      break;
+    case 'price_asc':
+      constraints.push(orderBy('price', 'asc'));
+      break;
+    case 'price_desc':
+      constraints.push(orderBy('price', 'desc'));
+      break;
+    case 'featured':
+      constraints.push(orderBy('rankOrder', 'asc'));
+      break;
+    default:
+      constraints.push(orderBy('createdAt', 'desc'));
+  }
+
+  constraints.push(limit(limitCount));
+
+  const q = query(collection(db, PRODUCTS), ...constraints);
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => mapProduct(d.id, d.data()));
+}
+
+export async function getFeaturedProducts(count = 6): Promise<Product[]> {
+  const q = query(collection(db, PRODUCTS), where('hidden', '==', false), where('featured', '==', true), orderBy('rankOrder', 'asc'), limit(count));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => mapProduct(d.id, d.data()));
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const q = query(collection(db, PRODUCTS), where('slug', '==', slug), where('hidden', '==', false), limit(1));
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  return mapProduct(d.id, d.data());
+}
+
+export async function getProductById(id: string): Promise<Product | null> {
+  const ref = doc(db, PRODUCTS, id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return mapProduct(snap.id, snap.data());
+}
+
+export async function incrementProductView(productId: string): Promise<void> {
+  const ref = doc(db, PRODUCTS, productId);
+  await updateDoc(ref, { viewCount: increment(1) });
+}
+
+export async function incrementProductInquiry(productId: string): Promise<void> {
+  const ref = doc(db, PRODUCTS, productId);
+  await updateDoc(ref, { inquiryCount: increment(1) });
+}
+
+// ─── Admin: Products ───────────────────────────────────────────────────────────
+export async function getAllProductsAdmin(): Promise<Product[]> {
+  const q = query(collection(db, PRODUCTS), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => mapProduct(d.id, d.data()));
+}
+
+export async function createProduct(data: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'viewCount' | 'inquiryCount'>): Promise<string> {
+  const ref = await addDoc(collection(db, PRODUCTS), {
+    ...data,
+    viewCount: 0,
+    inquiryCount: 0,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateProduct(id: string, data: Partial<Omit<Product, 'id' | 'createdAt'>>): Promise<void> {
+  const ref = doc(db, PRODUCTS, id);
+  await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  await deleteDoc(doc(db, PRODUCTS, id));
+}
+
+// ─── Projects ──────────────────────────────────────────────────────────────────
+export async function getProjects(featuredOnly = false): Promise<Project[]> {
+  const constraints: QueryConstraint[] = [orderBy('createdAt', 'desc')];
+  if (featuredOnly) constraints.unshift(where('featured', '==', true));
+  const q = query(collection(db, PROJECTS), ...constraints);
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => mapProject(d.id, d.data()));
+}
+
+export async function createProject(data: Omit<Project, 'id' | 'createdAt'>): Promise<string> {
+  const ref = await addDoc(collection(db, PROJECTS), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateProject(id: string, data: Partial<Omit<Project, 'id' | 'createdAt'>>): Promise<void> {
+  await updateDoc(doc(db, PROJECTS, id), data);
+}
+
+export async function deleteProject(id: string): Promise<void> {
+  await deleteDoc(doc(db, PROJECTS, id));
+}
+
+// ─── Promotions ────────────────────────────────────────────────────────────────
+export async function getActivePromotions(): Promise<Promotion[]> {
+  const q = query(collection(db, PROMOTIONS), where('active', '==', true), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Promotion);
+}
+
+export async function getAllPromotions(): Promise<Promotion[]> {
+  const q = query(collection(db, PROMOTIONS), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Promotion);
+}
+
+export async function createPromotion(data: Omit<Promotion, 'id' | 'createdAt'>): Promise<string> {
+  const ref = await addDoc(collection(db, PROMOTIONS), {
+    ...data,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updatePromotion(id: string, data: Partial<Omit<Promotion, 'id' | 'createdAt'>>): Promise<void> {
+  await updateDoc(doc(db, PROMOTIONS, id), data);
+}
+
+// ─── Slug generation ───────────────────────────────────────────────────────────
+export function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}

@@ -1,26 +1,86 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f7f4;
+  --surface: #ffffff;
+  --surface-2: #edecea;
+  --border: #dedbd4;
+  --gold: #2a2724;
+  --gold-light: #4a4540;
+  --stone: #8c8a82;
+  --stone-light: #c8c5bc;
+  --foreground: #1a1817;
+  --foreground-muted: #706c65;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-stone: var(--stone);
+  --color-stone-light: var(--stone-light);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-cormorant);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--stone);
+}
+
+/* Stone texture overlay utility */
+.stone-texture {
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 0, 0, 0.018) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(0, 0, 0, 0.012) 0%, transparent 40%);
+}
+
+/* Charcoal shimmer text (for light sections) */
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stone/pearl shimmer text (for dark sections) */
+.text-stone-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #c8c5bc 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Refined border effect */
+.marble-border {
+  border-image: linear-gradient(135deg, var(--gold), transparent, var(--gold)) 1;
 }
