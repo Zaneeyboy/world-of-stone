@@ -28,29 +28,20 @@ const defaultForm: FormState = {
 
 export default function ContactForm() {
   const [form, setForm] = useState<FormState>(defaultForm);
-  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
 
-    try {
-      // Send email notification
-      await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-    } catch {
-      // Non-blocking — WhatsApp always opens regardless
-    }
-
-    // Open WhatsApp with pre-filled message
-    const waText = encodeURIComponent(`*Contact Form Submission*\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nSubject: ${form.subject}\n\n*Message:*\n${form.message}`);
+    // Build pre-filled WhatsApp message and open it directly
+    const waText = encodeURIComponent(
+      `*New Inquiry — World of Stone*\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email || '—'}\nSubject: ${form.subject}\n\n*Message:*\n${form.message}`,
+    );
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waText}`, '_blank', 'noopener,noreferrer');
 
     setStatus('success');
@@ -238,7 +229,7 @@ export default function ContactForm() {
                   )}
                 </button>
 
-                <p className='text-[11px] text-foreground-muted text-center'>Your message opens WhatsApp for instant delivery and we&apos;ll also receive it by email.</p>
+                <p className='text-[11px] text-foreground-muted text-center'>Your details will open WhatsApp pre-filled — just hit send for instant delivery.</p>
               </form>
             </motion.div>
           </div>

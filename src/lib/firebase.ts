@@ -21,8 +21,6 @@ export const storage = getStorage(app);
 // API key is absent (e.g. Vercel build without env vars). Auth is only used
 // in client-side admin pages where NEXT_PUBLIC_* vars are always present.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const auth: ReturnType<typeof getAuth> = process.env.NEXT_PUBLIC_FIREBASE_API_KEY
-  ? getAuth(app)
-  : (null as any);
+export const auth: ReturnType<typeof getAuth> = process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? getAuth(app) : (null as any);
 
 export default app;
