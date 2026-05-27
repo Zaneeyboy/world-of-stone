@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { Suspense, useEffect, useState, useCallback, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -38,7 +38,7 @@ const defaultFilters: FilterState = {
   availability: '',
 };
 
-export default function CatalogPage() {
+function CatalogContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -273,5 +273,13 @@ export default function CatalogPage() {
       <Footer />
       <WhatsAppButton variant='floating' />
     </>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <Suspense>
+      <CatalogContent />
+    </Suspense>
   );
 }
