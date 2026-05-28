@@ -37,10 +37,46 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, promotions = [] }: ProductCardProps) {
   const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '18686204109';
+  const TTD_USD = Number(process.env.NEXT_PUBLIC_TTD_USD_RATE) || 6.78;
 
-  const waMessage = encodeURIComponent(`Hi, I'm interested in *${product.name}*.\nhttps://worldofstone.co.za/product/${product.slug}\n\nCould you please send pricing and availability?`);
+  const waMessage = encodeURIComponent(`Hi, I'm interested in *${product.name}*.\nhttps://worldofstone.tt/product/${product.slug}\n\nCould you please send pricing and availability?`);
 
   const hasPromo = promotions.some((p) => p.active && (p.productIds?.length === 0 || p.productIds?.includes(product.id)));
+
+  function PriceDisplay() {
+    if (product.pricePerSqFt) {
+      return (
+        <div>
+          <p className='text-gold font-semibold text-sm'>
+            TTD {product.pricePerSqFt.toLocaleString()}<span className='text-foreground-muted font-normal text-xs'>/sq ft</span>
+          </p>
+          <p className='text-foreground-muted text-[10px]'>≈ USD {(product.pricePerSqFt / TTD_USD).toFixed(2)}/sq ft</p>
+        </div>
+      );
+    }
+    if (product.pricePerSheet) {
+      return (
+        <div>
+          <p className='text-gold font-semibold text-sm'>
+            TTD {product.pricePerSheet.toLocaleString()}<span className='text-foreground-muted font-normal text-xs'>/sheet</span>
+          </p>
+          <p className='text-foreground-muted text-[10px]'>≈ USD {(product.pricePerSheet / TTD_USD).toFixed(2)}/sheet</p>
+        </div>
+      );
+    }
+    if (product.price) {
+      return (
+        <div>
+          <p className='text-gold font-semibold text-sm'>
+            TTD {product.price.toLocaleString()}
+            {product.priceUnit && <span className='text-foreground-muted font-normal text-xs ml-1'>{product.priceUnit}</span>}
+          </p>
+          <p className='text-foreground-muted text-[10px]'>≈ USD {(product.price / TTD_USD).toFixed(2)}</p>
+        </div>
+      );
+    }
+    return <p className='text-foreground-muted text-sm'>Price on inquiry</p>;
+  }
 
   return (
     <motion.article
@@ -103,14 +139,7 @@ export default function ProductCard({ product, promotions = [] }: ProductCardPro
         <div className='flex items-center justify-between mt-auto pt-3 border-t border-border'>
           {/* Price */}
           <div>
-            {product.price ? (
-              <p className='text-gold font-semibold'>
-                R{product.price.toLocaleString()}
-                {product.priceUnit && <span className='text-foreground-muted text-xs font-normal ml-1'>{product.priceUnit}</span>}
-              </p>
-            ) : (
-              <p className='text-foreground-muted text-sm'>Price on inquiry</p>
-            )}
+            <PriceDisplay />
           </div>
 
           {/* WhatsApp inquiry */}

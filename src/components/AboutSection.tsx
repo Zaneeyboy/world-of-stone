@@ -48,7 +48,7 @@ export default function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.08 }}
-              className='font-display text-4xl md:text-5xl lg:text-[3.4rem] font-semibold leading-[1.08] mb-6'
+              className='font-display text-4xl md:text-5xl lg:text-[3.4rem] font-light leading-[1.08] mb-6'
             >
               Twenty Years of
               <br />

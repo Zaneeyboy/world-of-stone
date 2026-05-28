@@ -1,11 +1,12 @@
 import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit, increment, serverTimestamp, Timestamp, QueryConstraint } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Product, Project, Promotion, FilterState, SortOption } from '@/types';
+import type { Product, Project, Promotion, FilterState, SortOption, Job, JobStatus } from '@/types';
 
-// ─── Collections ──────────────────────────────────────────────────────────────
+// ─── Collections ───────────────────────────────────────────────────────────
 const PRODUCTS = 'products';
 const PROJECTS = 'projects';
 const PROMOTIONS = 'promotions';
+const JOBS = 'jobs';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function tsToMs(ts: Timestamp | number): number {
@@ -188,4 +189,76 @@ export function generateSlug(name: string): string {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .trim();
+}
+
+// ─── Jobs ──────────────────────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapJob(id: string, data: any): Job {
+  return {
+    ...data,
+    id,
+    createdAt: tsToMs(data.createdAt),
+    updatedAt: tsToMs(data.updatedAt),
+    acceptedAt: data.acceptedAt ? tsToMs(data.acceptedAt) : undefined,
+    completedAt: data.completedAt ? tsToMs(data.completedAt) : undefined,
+    paidAt: data.paidAt ? tsToMs(data.paidAt) : undefined,
+  } as Job;
+}
+
+export async function getJobs(): Promise<Job[]> {
+  const q = query(collection(db, JOBS), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => mapJob(d.id, d.data()));
+}
+
+export async function getJob(id: string): Promise<Job | null> {
+  const snap = await getDoc(doc(db, JOBS, id));
+  if (!snap.exists()) return null;
+  return mapJob(snap.id, snap.data());
+}
+
+export async function getJobByToken(id: string, token: string): Promise<Job | null> {
+  const job = await getJob(id);
+  if (!job || job.accessToken !== token) return null;
+  return job;
+}
+
+export async function createJob(data: Omit<Job, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const ref = await addDoc(collection(db, JOBS), {
+    ...data,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateJob(id: string, data: Partial<Omit<Job, 'id' | 'createdAt'>>): Promise<void> {
+  await updateDoc(doc(db, JOBS, id), { ...data, updatedAt: serverTimestamp() });
+}
+
+export async function deleteJob(id: string): Promise<void> {
+  await deleteDoc(doc(db, JOBS, id));
+}
+
+export async function getJobStats(): Promise<{
+  byStatus: Partial<Record<JobStatus, number>>;
+  totalRevenueTTD: number;
+  pipelineValueTTD: number;
+}> {
+  const jobs = await getJobs();
+  const byStatus: Partial<Record<JobStatus, number>> = {};
+  let totalRevenueTTD = 0;
+  let pipelineValueTTD = 0;
+
+  for (const job of jobs) {
+    byStatus[job.status] = (byStatus[job.status] ?? 0) + 1;
+    if (job.status === 'paid' || job.status === 'invoiced' || job.status === 'completed') {
+      totalRevenueTTD += job.totalAmountTTD;
+    }
+    if (job.status === 'quote' || job.status === 'accepted' || job.status === 'in_progress') {
+      pipelineValueTTD += job.totalAmountTTD;
+    }
+  }
+
+  return { byStatus, totalRevenueTTD, pipelineValueTTD };
 }

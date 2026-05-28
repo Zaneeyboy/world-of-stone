@@ -6,15 +6,15 @@ import PageWrapper from '@/components/PageWrapper';
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'Learn about World of Stone — our story, experience, and commitment to premium stone materials across South Africa.',
+  description: 'Learn about World of Stone — our story, experience, and commitment to premium stone materials for residential, commercial, and hospitality projects across Trinidad & Tobago.'
 };
 
 const milestones = [
-  { year: '2012', desc: 'Founded in Johannesburg as a local stone reseller.' },
-  { year: '2015', desc: 'Expanded into full installation services for residential clients.' },
-  { year: '2018', desc: 'Entered commercial contracts — retail stores, hotels, and office lobbies.' },
-  { year: '2022', desc: 'Reached 400+ projects milestone with a growing team of specialist installers.' },
-  { year: '2025', desc: 'Launched expanded online catalog for nationwide supply and inquiry.' },
+  { year: '2004', desc: 'Founded in Trinidad as a specialist natural stone materials supplier.' },
+  { year: '2010', desc: 'Expanded into full installation services — kitchen tops, vanities, and staircases.' },
+  { year: '2016', desc: 'Entered commercial contracts with hotels, restaurants, bars, and housing developments.' },
+  { year: '2021', desc: 'Reached 500+ projects milestone across residential, hospitality, and commercial sectors.' },
+  { year: '2025', desc: 'Launched online catalog and quote system for convenient island-wide supply and inquiry.' },
 ];
 
 export default function AboutPage() {
@@ -44,16 +44,16 @@ export default function AboutPage() {
               <h2 className='font-display text-3xl font-semibold mb-6'>Who We Are</h2>
               <div className='space-y-4 text-foreground-muted text-sm leading-relaxed'>
                 <p>
-                  World of Stone is a premium supplier and installer of natural stone materials based in South Africa. We source granite, marble, quartz, limestone, travertine, sandstone, and slate
-                  from trusted quarries and partners — and supply them directly to homeowners, contractors, architects, and developers.
+                  World of Stone is Trinidad & Tobago’s premier supplier and installer of natural stone. We source granite, marble, quartz, limestone, travertine, and exotic stone from trusted
+                  quarries around the world — and deliver them directly to homeowners, architects, contractors, and developers across T&T.
                 </p>
                 <p>
-                  What started in 2012 as a local stone reseller has grown into a full-service stone company capable of handling projects from a single kitchen countertop to entire commercial floor
-                  installations.
+                  What began in 2004 as a stone materials supplier has grown into a full-service company handling everything from kitchen tops, waterfall edges, and vanities to staircase cladding,
+                  pool edge coping, wall cladding, fountains, and large-scale commercial and hospitality installations.
                 </p>
                 <p>
-                  We believe that great stone is not just a surface — it is a statement. Every slab we supply is selected for its quality, consistency, and visual character. We take pride in matching
-                  the right material to the right project.
+                  We believe that great stone is not just a surface — it is a statement. Every slab we supply is personally selected for its quality, character, and longevity. We take pride in
+                  matching the right material to the right project, every time.
                 </p>
               </div>
 
@@ -61,8 +61,8 @@ export default function AboutPage() {
               <div className='grid grid-cols-3 gap-6 mt-10 pt-10 border-t border-border'>
                 {[
                   { value: '500+', label: 'Projects' },
-                  { value: '12+', label: 'Years' },
-                  { value: '50+', label: 'Stone Varieties' },
+                  { value: '20+', label: 'Years' },
+                  { value: '80+', label: 'Stone Varieties' },
                 ].map((stat) => (
                   <div key={stat.label}>
                     <p className='font-display text-4xl font-semibold text-gold'>{stat.value}</p>
@@ -94,14 +94,15 @@ export default function AboutPage() {
               <div>
                 <h2 className='font-display text-3xl font-semibold mb-4'>Where We Are</h2>
                 <p className='text-foreground-muted text-sm leading-relaxed mb-6'>
-                  Our showroom and yard is based in Johannesburg, Gauteng. We supply and install across Johannesburg, Pretoria, and the wider Gauteng region. Enquire for out-of-region delivery.
+                  Our showroom and stone yard is based in Trinidad. We supply and install throughout Trinidad & Tobago, serving homeowners, contractors, hospitality venues, housing developers, and
+                  commercial clients island-wide.
                 </p>
                 <div className='space-y-2 text-sm text-foreground-muted'>
                   <p>
-                    <span className='text-foreground font-medium'>Location:</span> Johannesburg, Gauteng, South Africa
+                    <span className='text-foreground font-medium'>Location:</span> Trinidad & Tobago
                   </p>
                   <p>
-                    <span className='text-foreground font-medium'>Service Area:</span> Gauteng, with nationwide supply
+                    <span className='text-foreground font-medium'>Service Area:</span> Trinidad & Tobago
                   </p>
                   <p>
                     <span className='text-foreground font-medium'>Hours:</span> Mon–Fri: 8am–5pm, Sat: 9am–1pm
@@ -111,7 +112,7 @@ export default function AboutPage() {
 
               {/* Map placeholder */}
               <div className='aspect-video border border-border bg-surface-2 flex items-center justify-center stone-texture'>
-                <span className='text-xs text-foreground-muted uppercase tracking-widest'>Map — Johannesburg, SA</span>
+                <span className='text-xs text-foreground-muted uppercase tracking-widest'>Map — Trinidad & Tobago</span>
               </div>
             </div>
           </div>

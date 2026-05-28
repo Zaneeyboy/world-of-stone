@@ -7,8 +7,8 @@ import { auth } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import AdminGuard from '@/components/AdminGuard';
-import { getAllProductsAdmin, getProjects, getActivePromotions } from '@/lib/firestore';
-import { HiCollection, HiPhotograph, HiSpeakerphone, HiEye, HiLogout, HiPlus } from 'react-icons/hi';
+import { getAllProductsAdmin, getProjects, getActivePromotions, getJobStats } from '@/lib/firestore';
+import { HiCollection, HiPhotograph, HiSpeakerphone, HiEye, HiLogout, HiPlus, HiClipboardList } from 'react-icons/hi';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 export default function AdminDashboard() {
@@ -29,13 +29,17 @@ function DashboardContent() {
     activePromotions: 0,
     totalViews: 0,
     topProducts: [] as { name: string; viewCount: number; inquiryCount: number }[],
+    totalJobs: 0,
+    pipelineValueTTD: 0,
+    totalRevenueTTD: 0,
+    jobsByStatus: {} as Record<string, number>,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [products, projects, promotions] = await Promise.all([getAllProductsAdmin(), getProjects(), getActivePromotions()]);
+        const [products, projects, promotions, jobStats] = await Promise.all([getAllProductsAdmin(), getProjects(), getActivePromotions(), getJobStats()]);
 
         const totalViews = products.reduce((s, p) => s + (p.viewCount ?? 0), 0);
         const topProducts = [...products]
@@ -50,6 +54,10 @@ function DashboardContent() {
           activePromotions: promotions.length,
           totalViews,
           topProducts,
+          totalJobs: Object.values(jobStats.byStatus).reduce((a, b) => a + b, 0),
+          pipelineValueTTD: jobStats.pipelineValueTTD,
+          totalRevenueTTD: jobStats.totalRevenueTTD,
+          jobsByStatus: jobStats.byStatus,
         });
       } catch (err) {
         console.error(err);
@@ -93,12 +101,14 @@ function DashboardContent() {
         <p className='text-foreground-muted text-sm mb-10'>Overview of your catalog and activity.</p>
 
         {/* Stats */}
-        <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10'>
+        <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10'>
           {[
             { label: 'Total Products', value: stats.totalProducts, icon: HiCollection, color: 'text-gold' },
             { label: 'Hidden Products', value: stats.hiddenProducts, icon: HiCollection, color: 'text-foreground-muted' },
             { label: 'Projects', value: stats.totalProjects, icon: HiPhotograph, color: 'text-gold' },
             { label: 'Active Promotions', value: stats.activePromotions, icon: HiSpeakerphone, color: 'text-gold' },
+            { label: 'Total Jobs', value: stats.totalJobs, icon: HiClipboardList, color: 'text-gold' },
+            { label: 'Pipeline (TTD)', value: stats.pipelineValueTTD > 0 ? `$${Math.round(stats.pipelineValueTTD / 1000)}k` : '0', icon: HiClipboardList, color: 'text-gold' },
           ].map((stat) => (
             <div key={stat.label} className='bg-surface border border-border p-5'>
               <div className='flex items-center justify-between mb-3'>
@@ -120,7 +130,7 @@ function DashboardContent() {
         </div>
 
         {/* Quick actions */}
-        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10'>
           <Link href='/admin/products' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
             <HiCollection size={20} className='text-gold' />
             <div>
@@ -142,7 +152,57 @@ function DashboardContent() {
               <p className='text-xs text-foreground-muted'>Manage banners & offers</p>
             </div>
           </Link>
+          <Link href='/admin/jobs' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
+            <HiClipboardList size={20} className='text-gold' />
+            <div>
+              <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Jobs & Quotes</p>
+              <p className='text-xs text-foreground-muted'>Create and manage client quotes</p>
+            </div>
+          </Link>
         </div>
+
+        {/* Revenue cards */}
+        {!loading && stats.totalJobs > 0 && (
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10'>
+            <div className='bg-surface border border-border p-6'>
+              <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Pipeline Value (TTD)</p>
+              <p className='font-display text-3xl font-semibold text-gold'>
+                TTD {stats.pipelineValueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}
+              </p>
+              <p className='text-xs text-foreground-muted mt-1'>Active quotes + accepted + in progress</p>
+            </div>
+            <div className='bg-surface border border-border p-6'>
+              <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Total Revenue (TTD)</p>
+              <p className='font-display text-3xl font-semibold text-gold'>
+                TTD {stats.totalRevenueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}
+              </p>
+              <p className='text-xs text-foreground-muted mt-1'>Completed + invoiced + paid jobs</p>
+            </div>
+          </div>
+        )}
+
+        {/* Job pipeline status breakdown */}
+        {!loading && stats.totalJobs > 0 && (
+          <div className='bg-surface border border-border p-6 mb-10'>
+            <h2 className='font-display text-lg font-semibold mb-5'>Job Pipeline</h2>
+            <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3'>
+              {[
+                { key: 'quote', label: 'Quote', color: 'text-blue-400' },
+                { key: 'accepted', label: 'Accepted', color: 'text-teal-400' },
+                { key: 'in_progress', label: 'In Progress', color: 'text-amber-400' },
+                { key: 'completed', label: 'Completed', color: 'text-emerald-400' },
+                { key: 'invoiced', label: 'Invoiced', color: 'text-purple-400' },
+                { key: 'paid', label: 'Paid', color: 'text-green-400' },
+                { key: 'cancelled', label: 'Cancelled', color: 'text-red-400' },
+              ].map((s) => (
+                <div key={s.key} className='text-center p-3 border border-border'>
+                  <p className={`font-display text-2xl font-semibold ${s.color}`}>{stats.jobsByStatus[s.key] ?? 0}</p>
+                  <p className='text-[10px] text-foreground-muted uppercase tracking-wider mt-1'>{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Top products */}
         {!loading && stats.topProducts.length > 0 && (

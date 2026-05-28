@@ -20,7 +20,9 @@ const emptyForm = {
   color: '',
   colorTags: '',
   price: '',
-  priceUnit: 'per m²',
+  pricePerSqFt: '',
+  pricePerSheet: '',
+  priceUnit: 'per sq ft',
   availability: 'in_stock' as Product['availability'],
   useCases: '',
   featured: false,
@@ -79,7 +81,9 @@ function ProductsContent() {
       color: product.color,
       colorTags: product.colorTags.join(', '),
       price: product.price?.toString() ?? '',
-      priceUnit: product.priceUnit ?? 'per m²',
+      pricePerSqFt: product.pricePerSqFt?.toString() ?? '',
+      pricePerSheet: product.pricePerSheet?.toString() ?? '',
+      priceUnit: product.priceUnit ?? 'per sq ft',
       availability: product.availability,
       useCases: product.useCases.join(', '),
       featured: product.featured,
@@ -115,7 +119,9 @@ function ProductsContent() {
           .map((s) => s.trim())
           .filter(Boolean),
         price: form.price ? Number(form.price) : null,
-        priceUnit: form.priceUnit || 'per m²',
+        pricePerSqFt: form.pricePerSqFt ? Number(form.pricePerSqFt) : null,
+        pricePerSheet: form.pricePerSheet ? Number(form.pricePerSheet) : null,
+        priceUnit: form.priceUnit || 'per sq ft',
         availability: form.availability,
         useCases: form.useCases
           .split(',')
@@ -223,13 +229,23 @@ function ProductsContent() {
                   </div>
 
                   <div>
-                    <label className='admin-label'>Price (ZAR, optional)</label>
+                    <label className='admin-label'>Price per Sq Ft (TTD, optional)</label>
+                    <input type='number' name='pricePerSqFt' value={form.pricePerSqFt} onChange={handleChange} className='admin-input' placeholder='120' />
+                  </div>
+
+                  <div>
+                    <label className='admin-label'>Price per Sheet (TTD, optional)</label>
+                    <input type='number' name='pricePerSheet' value={form.pricePerSheet} onChange={handleChange} className='admin-input' placeholder='4500' />
+                  </div>
+
+                  <div>
+                    <label className='admin-label'>Custom Price (TTD, optional)</label>
                     <input type='number' name='price' value={form.price} onChange={handleChange} className='admin-input' placeholder='850' />
                   </div>
 
                   <div>
-                    <label className='admin-label'>Price Unit</label>
-                    <input name='priceUnit' value={form.priceUnit} onChange={handleChange} className='admin-input' placeholder='per m²' />
+                    <label className='admin-label'>Custom Price Unit</label>
+                    <input name='priceUnit' value={form.priceUnit} onChange={handleChange} className='admin-input' placeholder='per sq ft' />
                   </div>
 
                   <div>

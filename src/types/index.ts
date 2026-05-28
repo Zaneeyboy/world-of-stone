@@ -10,8 +10,10 @@ export interface Product {
   materialType: MaterialType;
   color: string;
   colorTags: string[];
-  price?: number | null; // null = price on inquiry
-  priceUnit?: string; // e.g. "per m²"
+  price?: number | null; // null = price on inquiry (kept for backward compat)
+  pricePerSqFt?: number | null; // TTD per sq ft
+  pricePerSheet?: number | null; // TTD per full slab/sheet
+  priceUnit?: string; // e.g. "per m²" (legacy)
   images: string[];
   featured: boolean;
   hidden: boolean;
@@ -64,4 +66,58 @@ export interface FilterState {
   priceMin: number | '';
   priceMax: number | '';
   availability: AvailabilityStatus | '';
+}
+
+// ─── Jobs / Quoting ───────────────────────────────────────────────────────────
+
+export type JobStatus = 'quote' | 'accepted' | 'in_progress' | 'completed' | 'invoiced' | 'paid' | 'cancelled';
+
+export type ServiceType =
+  | 'kitchen_top'
+  | 'backsplash'
+  | 'waterfall_edge'
+  | 'vanity'
+  | 'staircase'
+  | 'wall_cladding'
+  | 'pool_edge'
+  | 'fountain'
+  | 'flooring'
+  | 'other';
+
+export interface JobLineItem {
+  id: string;
+  description: string;
+  serviceType: ServiceType;
+  materialId?: string;
+  materialName?: string;
+  // Pricing mode: sq ft OR sheets OR flat unit price (one set per line item)
+  sqft?: number;
+  pricePerSqFt?: number; // TTD
+  sheets?: number;
+  pricePerSheet?: number; // TTD
+  quantity?: number;
+  unitPrice?: number; // TTD flat unit
+  lineTotal: number; // TTD
+  notes?: string;
+}
+
+export interface Job {
+  id: string;
+  jobNumber: string; // e.g. WOS-2026-001
+  clientName: string;
+  clientPhone: string;
+  clientEmail?: string;
+  clientAddress?: string;
+  title: string;
+  status: JobStatus;
+  lineItems: JobLineItem[];
+  notes?: string;
+  totalAmountTTD: number;
+  totalAmountUSD?: number; // derived via exchange rate
+  accessToken: string; // UUID used in /quote/[jobId]?token=xxx
+  createdAt: number;
+  updatedAt: number;
+  acceptedAt?: number;
+  completedAt?: number;
+  paidAt?: number;
 }

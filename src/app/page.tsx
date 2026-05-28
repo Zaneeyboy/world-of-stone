@@ -1,6 +1,7 @@
 ﻿import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
+import StatsBanner from '@/components/StatsBanner';
 import FeaturedMaterials from '@/components/FeaturedMaterials';
 import MaterialCategories from '@/components/MaterialCategories';
 import AboutSection from '@/components/AboutSection';
@@ -25,6 +26,7 @@ export default async function HomePage() {
       <Navbar />
       <main>
         <HeroSection />
+        <StatsBanner />
         <FeaturedMaterials products={featuredProducts} />
         <MaterialCategories />
         <AboutSection />
