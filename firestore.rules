@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public catalog — anyone can read products, projects, and promotions
+    // Public catalog — anyone can read
     match /products/{id} {
       allow read: if true;
       allow write: if request.auth != null;
@@ -18,7 +18,26 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
-    // Deny everything else by default
+    // Admin-only collections
+    match /jobs/{id} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /clients/{id} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /counters/{id} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Analytics — public create for fire-and-forget tracking; auth for reads
+    match /analytics_events/{id} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Deny everything else
     match /{document=**} {
       allow read, write: if false;
     }
