@@ -1,12 +1,32 @@
-import { collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit, increment, serverTimestamp, Timestamp, QueryConstraint } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
+  increment,
+  serverTimestamp,
+  Timestamp,
+  QueryConstraint,
+  runTransaction,
+} from 'firebase/firestore';
 import { db } from './firebase';
-import type { Product, Project, Promotion, FilterState, SortOption, Job, JobStatus } from '@/types';
+import type { Product, Project, Promotion, FilterState, SortOption, Job, JobStatus, Client } from '@/types';
 
 // ─── Collections ───────────────────────────────────────────────────────────
 const PRODUCTS = 'products';
 const PROJECTS = 'projects';
 const PROMOTIONS = 'promotions';
 const JOBS = 'jobs';
+const CLIENTS = 'clients';
+const COUNTERS = 'counters';
+const ANALYTICS = 'analytics_events';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function tsToMs(ts: Timestamp | number): number {
@@ -261,4 +281,191 @@ export async function getJobStats(): Promise<{
   }
 
   return { byStatus, totalRevenueTTD, pipelineValueTTD };
+}
+
+// ─── Invoice helpers ──────────────────────────────────────────────────────────
+
+/**
+ * Atomically increment the invoice counter and return the next number
+ * as a formatted string like "INV-2026-001".
+ */
+export async function getNextInvoiceNumber(): Promise<string> {
+  const counterRef = doc(db, COUNTERS, 'invoices');
+  const year = new Date().getFullYear();
+
+  const nextSeq = await runTransaction(db, async (tx) => {
+    const snap = await tx.get(counterRef);
+    const data = snap.data() as { seq?: number; year?: number } | undefined;
+    const storedYear = data?.year ?? year;
+
+    // Reset sequence each calendar year
+    const seq = storedYear === year ? (data?.seq ?? 0) + 1 : 1;
+    tx.set(counterRef, { seq, year }, { merge: true });
+    return seq;
+  });
+
+  return `INV-${year}-${String(nextSeq).padStart(3, '0')}`;
+}
+
+export interface GenerateInvoiceOptions {
+  termsDays: 7 | 14 | 30;
+  vatPercent: number; // 0 or 12.5
+}
+
+/**
+ * Generate an invoice for a job: assigns an invoice number, sets due date,
+ * and transitions status to 'invoiced'.
+ */
+export async function generateInvoice(jobId: string, options: GenerateInvoiceOptions): Promise<string> {
+  const invoiceNumber = await getNextInvoiceNumber();
+  const now = Date.now();
+  const dueDate = now + options.termsDays * 24 * 60 * 60 * 1000;
+
+  await updateDoc(doc(db, JOBS, jobId), {
+    invoiceNumber,
+    invoicedAt: now,
+    paymentDueDate: dueDate,
+    paymentTermsDays: options.termsDays,
+    vatPercent: options.vatPercent,
+    status: 'invoiced',
+    updatedAt: serverTimestamp(),
+  });
+
+  return invoiceNumber;
+}
+
+// ─── Analytics ────────────────────────────────────────────────────────────────
+
+export type AnalyticsEventType = 'product_view' | 'product_inquiry' | 'quote_view';
+
+/**
+ * Fire-and-forget analytics event tracking. Silently fails on error.
+ */
+export function trackEvent(type: AnalyticsEventType, entityId: string): void {
+  const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  addDoc(collection(db, ANALYTICS), {
+    type,
+    entityId,
+    date,
+    createdAt: serverTimestamp(),
+  }).catch(() => {
+    // Silent — analytics should never break UX
+  });
+}
+
+export interface DailyCount {
+  date: string;
+  count: number;
+}
+
+export async function getProductAnalytics(productId: string, days = 30): Promise<{ views: DailyCount[]; inquiries: DailyCount[] }> {
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+  const sinceStr = since.toISOString().slice(0, 10);
+
+  const q = query(collection(db, ANALYTICS), where('entityId', '==', productId), where('date', '>=', sinceStr), orderBy('date', 'asc'));
+
+  const snap = await getDocs(q);
+
+  const viewCounts: Record<string, number> = {};
+  const inquiryCounts: Record<string, number> = {};
+
+  for (const d of snap.docs) {
+    const { type, date } = d.data() as { type: AnalyticsEventType; date: string };
+    if (type === 'product_view') viewCounts[date] = (viewCounts[date] ?? 0) + 1;
+    if (type === 'product_inquiry') inquiryCounts[date] = (inquiryCounts[date] ?? 0) + 1;
+  }
+
+  const views = Object.entries(viewCounts).map(([date, count]) => ({ date, count }));
+  const inquiries = Object.entries(inquiryCounts).map(([date, count]) => ({ date, count }));
+
+  return { views, inquiries };
+}
+
+export interface RevenueMonth {
+  month: string; // e.g. "Jan 2026"
+  revenueTTD: number;
+}
+
+export async function getRevenueByMonth(months = 6): Promise<RevenueMonth[]> {
+  const jobs = await getJobs();
+  const paid = jobs.filter((j) => j.status === 'paid' || j.status === 'invoiced' || j.status === 'completed');
+
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - months + 1);
+  cutoff.setDate(1);
+  cutoff.setHours(0, 0, 0, 0);
+
+  const byMonth: Record<string, number> = {};
+
+  for (const job of paid) {
+    const d = new Date(job.updatedAt);
+    if (d < cutoff) continue;
+    const key = d.toLocaleDateString('en-TT', { year: 'numeric', month: 'short' });
+    byMonth[key] = (byMonth[key] ?? 0) + job.totalAmountTTD;
+  }
+
+  // Build ordered array for the last N months
+  const result: RevenueMonth[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const key = d.toLocaleDateString('en-TT', { year: 'numeric', month: 'short' });
+    result.push({ month: key, revenueTTD: byMonth[key] ?? 0 });
+  }
+
+  return result;
+}
+
+// ─── Clients ──────────────────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapClient(id: string, data: any): Client {
+  return {
+    ...data,
+    id,
+    createdAt: tsToMs(data.createdAt),
+    updatedAt: tsToMs(data.updatedAt),
+  } as Client;
+}
+
+export async function getClients(): Promise<Client[]> {
+  const snap = await getDocs(query(collection(db, CLIENTS), orderBy('name', 'asc')));
+  return snap.docs.map((d) => mapClient(d.id, d.data()));
+}
+
+export async function getClient(id: string): Promise<Client | null> {
+  const snap = await getDoc(doc(db, CLIENTS, id));
+  if (!snap.exists()) return null;
+  return mapClient(snap.id, snap.data());
+}
+
+export async function createClient(data: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  const now = Date.now();
+  const ref = await addDoc(collection(db, CLIENTS), { ...data, createdAt: now, updatedAt: now });
+  return ref.id;
+}
+
+export async function updateClient(id: string, data: Partial<Omit<Client, 'id' | 'createdAt'>>): Promise<void> {
+  await updateDoc(doc(db, CLIENTS, id), { ...data, updatedAt: Date.now() });
+}
+
+export async function deleteClient(id: string): Promise<void> {
+  await deleteDoc(doc(db, CLIENTS, id));
+}
+
+export async function getJobsByClientId(clientId: string): Promise<Job[]> {
+  const snap = await getDocs(query(collection(db, JOBS), where('clientId', '==', clientId), orderBy('createdAt', 'desc')));
+  return snap.docs.map((d) => mapJob(d.id, d.data()));
+}
+
+export async function getClientStats(clientId: string): Promise<{ jobCount: number; totalRevenueTTD: number; pipelineTTD: number }> {
+  const jobs = await getJobsByClientId(clientId);
+  const paid = jobs.filter((j) => j.status === 'paid' || j.status === 'invoiced');
+  const pipeline = jobs.filter((j) => !['paid', 'cancelled'].includes(j.status));
+  return {
+    jobCount: jobs.length,
+    totalRevenueTTD: paid.reduce((s, j) => s + j.totalAmountTTD, 0),
+    pipelineTTD: pipeline.reduce((s, j) => s + j.totalAmountTTD, 0),
+  };
 }

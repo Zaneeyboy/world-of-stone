@@ -7,23 +7,23 @@ import { HiArrowRight } from 'react-icons/hi';
 const steps = [
   {
     number: '01',
-    title: 'Consultation & Design',
-    desc: 'We begin with a site visit and project consultation — understanding your vision, dimensions, and budget. Our team advises on the best material for kitchens, vanities, staircases, pool edges, and more.',
+    title: 'Global Sourcing',
+    desc: 'We visit quarries across Brazil, Italy, India, Portugal, and Spain — personally selecting slabs that meet our quality threshold. Only the finest material makes it into our inventory.',
   },
   {
     number: '02',
-    title: 'Material Selection',
-    desc: 'Choose from our curated inventory of granite, marble, quartz, limestone, and exotic stone. We guide you through colour, texture, and finish options to perfectly suit your space and lifestyle.',
+    title: 'Expert Fabrication',
+    desc: 'Each slab is precision-cut, edged, and finished by our craftsmen. We offer a full range of profiles and finishes — polished, honed, leathered, brushed, and sandblasted.',
   },
   {
     number: '03',
-    title: 'Templating & Fabrication',
-    desc: 'Our craftsmen visit your site to template exact dimensions. Each piece is precision-cut, edged, and finished — polished, honed, or leathered — before delivery to your project.',
+    title: 'Professional Installation',
+    desc: 'Our dedicated installation teams carry decades of collective experience across residential, commercial, and hospitality projects. Every joint, every edge, placed with care.',
   },
   {
     number: '04',
-    title: 'Installation & Handover',
-    desc: 'Experienced teams handle everything from kitchen countertops and waterfall edges to wall cladding, pool edge coping, and outdoor features. We seal, inspect, and sign off every surface before handover.',
+    title: 'Final Finishing',
+    desc: 'We seal, treat, and inspect every surface before handover. The result is a finished space that reflects the true character of the material — and lasts a lifetime.',
   },
 ];
 
@@ -65,7 +65,10 @@ export default function ProcessSection() {
             </motion.h2>
           </div>
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <Link href='/contact' className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-foreground-muted hover:text-gold transition-colors duration-200'>
+            <Link
+              href='/contact'
+              className='group inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.15em] text-foreground-muted hover:text-gold transition-colors duration-200'
+            >
               <span>Start Your Project</span>
               <HiArrowRight size={14} className='group-hover:translate-x-1 transition-transform duration-200' />
             </Link>
@@ -81,7 +84,7 @@ export default function ProcessSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: 'easeOut' }}
-              className='group relative pt-10 pb-12 px-8 border-b border-r border-border last:border-r-0 md:even:border-r-0 lg:even:border-r lg:last:border-r-0'
+              className='group relative pt-10 pb-12 pr-8 border-b border-r border-border last:border-r-0 md:even:border-r-0 lg:even:border-r lg:last:border-r-0'
             >
               {/* Step number */}
               <div className='flex items-end gap-3 mb-7'>

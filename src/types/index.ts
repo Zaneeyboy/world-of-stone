@@ -72,17 +72,7 @@ export interface FilterState {
 
 export type JobStatus = 'quote' | 'accepted' | 'in_progress' | 'completed' | 'invoiced' | 'paid' | 'cancelled';
 
-export type ServiceType =
-  | 'kitchen_top'
-  | 'backsplash'
-  | 'waterfall_edge'
-  | 'vanity'
-  | 'staircase'
-  | 'wall_cladding'
-  | 'pool_edge'
-  | 'fountain'
-  | 'flooring'
-  | 'other';
+export type ServiceType = 'kitchen_top' | 'backsplash' | 'waterfall_edge' | 'vanity' | 'staircase' | 'wall_cladding' | 'pool_edge' | 'fountain' | 'flooring' | 'other';
 
 export interface JobLineItem {
   id: string;
@@ -115,9 +105,30 @@ export interface Job {
   totalAmountTTD: number;
   totalAmountUSD?: number; // derived via exchange rate
   accessToken: string; // UUID used in /quote/[jobId]?token=xxx
+  // Invoice fields
+  invoiceNumber?: string; // e.g. INV-2026-001
+  invoicedAt?: number;
+  paymentDueDate?: number;
+  paymentTermsDays?: 7 | 14 | 30;
+  vatPercent?: number; // 0 or 12.5 (TT VAT rate)
+  // Client link (Phase D)
+  clientId?: string;
   createdAt: number;
   updatedAt: number;
   acceptedAt?: number;
   completedAt?: number;
   paidAt?: number;
+}
+
+// ─── Clients ─────────────────────────────────────────────────────────────────
+
+export interface Client {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+  createdAt: number;
+  updatedAt: number;
 }

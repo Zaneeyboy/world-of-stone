@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { HiChevronLeft, HiChevronRight, HiEye } from 'react-icons/hi';
 import type { Product } from '@/types';
-import { incrementProductView } from '@/lib/firestore';
+import { incrementProductView, trackEvent } from '@/lib/firestore';
 import WhatsAppButton from '@/components/WhatsAppButton';
 
 const materialLabel: Record<Product['materialType'], string> = {
@@ -43,6 +43,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   useEffect(() => {
     incrementProductView(product.id).catch(() => {});
+    trackEvent('product_view', product.id);
   }, [product.id]);
 
   const prevImage = () => setActiveImage((i) => (i - 1 + product.images.length) % product.images.length);

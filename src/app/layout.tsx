@@ -21,13 +21,13 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://worldofstone.tt'),
+  metadataBase: new URL('https://worldofstone.co.za'),
   title: {
     default: 'World of Stone — Premium Stone Materials',
     template: '%s | World of Stone',
   },
-  description: 'Premium granite, marble, and natural stone materials for kitchens, vanities, staircases, and commercial projects. Supplier and installer based in Trinidad & Tobago.',
-  keywords: ['granite', 'marble', 'natural stone', 'stone supplier', 'Trinidad', 'Tobago', 'Caribbean', 'kitchen countertop', 'stone installer', 'TTD'],
+  description: 'Premium granite, marble, and natural stone materials for construction, kitchens, interiors, and commercial projects. Supplier and installer based in South Africa.',
+  keywords: ['granite', 'marble', 'natural stone', 'stone supplier', 'kitchen stone', 'floor tiles', 'stone installer', 'South Africa'],
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -38,10 +38,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_TT',
     siteName: 'World of Stone',
     title: 'World of Stone — Premium Stone Materials',
-    description: 'Premium granite, marble, and natural stone materials for kitchens, vanities, staircases, and commercial projects across Trinidad & Tobago.',
+    description: 'Premium granite, marble, and natural stone materials for construction, kitchens, interiors, and commercial projects.',
     images: [{ url: '/android-chrome-512x512.png', width: 512, height: 512 }],
   },
   twitter: {

@@ -10,13 +10,12 @@ export default function Footer() {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'>
           {/* Brand */}
           <div className='lg:col-span-2'>
-            <div className='mb-4'>
-              <span className='font-display text-xl font-light tracking-wide text-foreground'>
-                World <span className='text-gold-light italic'>of Stone</span>
-              </span>
+            <div className='flex items-center gap-3 mb-4'>
+              <span className='w-8 h-8 bg-gold flex items-center justify-center text-black font-bold text-sm font-display'>W</span>
+              <span className='font-display text-xl font-semibold tracking-wide text-foreground'>World of Stone</span>
             </div>
             <p className='text-foreground-muted text-sm leading-relaxed max-w-xs'>
-              Premium granite, marble, and natural stone materials for residential, commercial, and hospitality projects across Trinidad & Tobago.
+              Premium granite, marble, and natural stone materials for construction, kitchens, interiors, and commercial projects across South Africa.
             </p>
             <div className='flex items-center gap-4 mt-6'>
               <a

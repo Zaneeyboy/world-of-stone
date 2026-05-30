@@ -2,26 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { useAuth } from '@/lib/auth-context';
-import { useRouter } from 'next/navigation';
-import AdminGuard from '@/components/AdminGuard';
-import { getAllProductsAdmin, getProjects, getActivePromotions, getJobStats } from '@/lib/firestore';
-import { HiCollection, HiPhotograph, HiSpeakerphone, HiEye, HiLogout, HiPlus, HiClipboardList } from 'react-icons/hi';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import AdminShell from '@/components/admin/AdminShell';
+import { getAllProductsAdmin, getProjects, getActivePromotions, getJobStats, getRevenueByMonth } from '@/lib/firestore';
+import type { RevenueMonth } from '@/lib/firestore';
+import { HiCollection, HiPhotograph, HiSpeakerphone, HiEye, HiPlus, HiClipboardList } from 'react-icons/hi';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid } from 'recharts';
 
 export default function AdminDashboard() {
   return (
-    <AdminGuard>
+    <AdminShell title='Dashboard'>
       <DashboardContent />
-    </AdminGuard>
+    </AdminShell>
   );
 }
 
 function DashboardContent() {
-  const { user } = useAuth();
-  const router = useRouter();
   const [stats, setStats] = useState({
     totalProducts: 0,
     hiddenProducts: 0,
@@ -34,12 +29,13 @@ function DashboardContent() {
     totalRevenueTTD: 0,
     jobsByStatus: {} as Record<string, number>,
   });
+  const [revenueData, setRevenueData] = useState<RevenueMonth[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [products, projects, promotions, jobStats] = await Promise.all([getAllProductsAdmin(), getProjects(), getActivePromotions(), getJobStats()]);
+        const [products, projects, promotions, jobStats, revenue] = await Promise.all([getAllProductsAdmin(), getProjects(), getActivePromotions(), getJobStats(), getRevenueByMonth(6)]);
 
         const totalViews = products.reduce((s, p) => s + (p.viewCount ?? 0), 0);
         const topProducts = [...products]
@@ -59,6 +55,7 @@ function DashboardContent() {
           totalRevenueTTD: jobStats.totalRevenueTTD,
           jobsByStatus: jobStats.byStatus,
         });
+        setRevenueData(revenue);
       } catch (err) {
         console.error(err);
       } finally {
@@ -68,202 +65,189 @@ function DashboardContent() {
     load();
   }, []);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.replace('/admin/login');
-  };
-
   return (
-    <div className='min-h-screen bg-background'>
-      {/* Admin Nav */}
-      <header className='sticky top-0 z-40 bg-surface border-b border-border'>
-        <div className='max-w-7xl mx-auto px-6 h-16 flex items-center justify-between'>
-          <div className='flex items-center gap-4'>
-            <Link href='/' className='flex items-center gap-2'>
-              <span className='w-7 h-7 rounded bg-gold flex items-center justify-center text-background font-bold text-xs font-display'>W</span>
-              <span className='font-display font-semibold hidden sm:block'>World of Stone</span>
-            </Link>
-            <span className='text-border'>|</span>
-            <span className='text-xs text-foreground-muted uppercase tracking-widest'>Admin</span>
+    <div className='max-w-7xl mx-auto px-6 py-10'>
+      <h1 className='font-display text-3xl font-semibold mb-2'>Dashboard</h1>
+      <p className='text-foreground-muted text-sm mb-10'>Overview of your catalog and activity.</p>
+
+      {/* Stats */}
+      <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10'>
+        {[
+          { label: 'Total Products', value: stats.totalProducts, icon: HiCollection, color: 'text-gold' },
+          { label: 'Hidden Products', value: stats.hiddenProducts, icon: HiCollection, color: 'text-foreground-muted' },
+          { label: 'Projects', value: stats.totalProjects, icon: HiPhotograph, color: 'text-gold' },
+          { label: 'Active Promotions', value: stats.activePromotions, icon: HiSpeakerphone, color: 'text-gold' },
+          { label: 'Total Jobs', value: stats.totalJobs, icon: HiClipboardList, color: 'text-gold' },
+          { label: 'Pipeline (TTD)', value: stats.pipelineValueTTD > 0 ? `$${Math.round(stats.pipelineValueTTD / 1000)}k` : '0', icon: HiClipboardList, color: 'text-gold' },
+        ].map((stat) => (
+          <div key={stat.label} className='bg-surface border border-border p-5'>
+            <div className='flex items-center justify-between mb-3'>
+              <p className='text-xs text-foreground-muted uppercase tracking-wider'>{stat.label}</p>
+              <stat.icon size={16} className={stat.color} />
+            </div>
+            <p className={`font-display text-3xl font-semibold ${loading ? 'opacity-20' : ''} ${stat.color}`}>{loading ? '—' : stat.value}</p>
           </div>
-          <div className='flex items-center gap-4'>
-            <span className='text-xs text-foreground-muted hidden sm:block'>{user?.email}</span>
-            <button onClick={handleLogout} className='flex items-center gap-2 px-3 py-1.5 border border-border hover:border-red-800 text-foreground-muted hover:text-red-400 text-xs transition-colors'>
-              <HiLogout size={14} />
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className='max-w-7xl mx-auto px-6 py-10'>
-        <h1 className='font-display text-3xl font-semibold mb-2'>Dashboard</h1>
-        <p className='text-foreground-muted text-sm mb-10'>Overview of your catalog and activity.</p>
-
-        {/* Stats */}
-        <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-10'>
-          {[
-            { label: 'Total Products', value: stats.totalProducts, icon: HiCollection, color: 'text-gold' },
-            { label: 'Hidden Products', value: stats.hiddenProducts, icon: HiCollection, color: 'text-foreground-muted' },
-            { label: 'Projects', value: stats.totalProjects, icon: HiPhotograph, color: 'text-gold' },
-            { label: 'Active Promotions', value: stats.activePromotions, icon: HiSpeakerphone, color: 'text-gold' },
-            { label: 'Total Jobs', value: stats.totalJobs, icon: HiClipboardList, color: 'text-gold' },
-            { label: 'Pipeline (TTD)', value: stats.pipelineValueTTD > 0 ? `$${Math.round(stats.pipelineValueTTD / 1000)}k` : '0', icon: HiClipboardList, color: 'text-gold' },
-          ].map((stat) => (
-            <div key={stat.label} className='bg-surface border border-border p-5'>
-              <div className='flex items-center justify-between mb-3'>
-                <p className='text-xs text-foreground-muted uppercase tracking-wider'>{stat.label}</p>
-                <stat.icon size={16} className={stat.color} />
-              </div>
-              <p className={`font-display text-3xl font-semibold ${loading ? 'opacity-20' : ''} ${stat.color}`}>{loading ? '—' : stat.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Total views stat */}
-        <div className='bg-surface border border-border p-5 mb-10'>
-          <div className='flex items-center justify-between mb-1'>
-            <p className='text-xs text-foreground-muted uppercase tracking-wider'>Total Product Views</p>
-            <HiEye size={16} className='text-gold' />
-          </div>
-          <p className={`font-display text-4xl font-semibold text-gold ${loading ? 'opacity-20' : ''}`}>{loading ? '—' : stats.totalViews.toLocaleString()}</p>
-        </div>
-
-        {/* Quick actions */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10'>
-          <Link href='/admin/products' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
-            <HiCollection size={20} className='text-gold' />
-            <div>
-              <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Manage Products</p>
-              <p className='text-xs text-foreground-muted'>Add, edit, or hide materials</p>
-            </div>
-          </Link>
-          <Link href='/admin/projects' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
-            <HiPhotograph size={20} className='text-gold' />
-            <div>
-              <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Manage Projects</p>
-              <p className='text-xs text-foreground-muted'>Add client work & portfolio</p>
-            </div>
-          </Link>
-          <Link href='/admin/promotions' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
-            <HiSpeakerphone size={20} className='text-gold' />
-            <div>
-              <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Promotions</p>
-              <p className='text-xs text-foreground-muted'>Manage banners & offers</p>
-            </div>
-          </Link>
-          <Link href='/admin/jobs' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
-            <HiClipboardList size={20} className='text-gold' />
-            <div>
-              <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Jobs & Quotes</p>
-              <p className='text-xs text-foreground-muted'>Create and manage client quotes</p>
-            </div>
-          </Link>
-        </div>
-
-        {/* Revenue cards */}
-        {!loading && stats.totalJobs > 0 && (
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10'>
-            <div className='bg-surface border border-border p-6'>
-              <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Pipeline Value (TTD)</p>
-              <p className='font-display text-3xl font-semibold text-gold'>
-                TTD {stats.pipelineValueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}
-              </p>
-              <p className='text-xs text-foreground-muted mt-1'>Active quotes + accepted + in progress</p>
-            </div>
-            <div className='bg-surface border border-border p-6'>
-              <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Total Revenue (TTD)</p>
-              <p className='font-display text-3xl font-semibold text-gold'>
-                TTD {stats.totalRevenueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}
-              </p>
-              <p className='text-xs text-foreground-muted mt-1'>Completed + invoiced + paid jobs</p>
-            </div>
-          </div>
-        )}
-
-        {/* Job pipeline status breakdown */}
-        {!loading && stats.totalJobs > 0 && (
-          <div className='bg-surface border border-border p-6 mb-10'>
-            <h2 className='font-display text-lg font-semibold mb-5'>Job Pipeline</h2>
-            <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3'>
-              {[
-                { key: 'quote', label: 'Quote', color: 'text-blue-400' },
-                { key: 'accepted', label: 'Accepted', color: 'text-teal-400' },
-                { key: 'in_progress', label: 'In Progress', color: 'text-amber-400' },
-                { key: 'completed', label: 'Completed', color: 'text-emerald-400' },
-                { key: 'invoiced', label: 'Invoiced', color: 'text-purple-400' },
-                { key: 'paid', label: 'Paid', color: 'text-green-400' },
-                { key: 'cancelled', label: 'Cancelled', color: 'text-red-400' },
-              ].map((s) => (
-                <div key={s.key} className='text-center p-3 border border-border'>
-                  <p className={`font-display text-2xl font-semibold ${s.color}`}>{stats.jobsByStatus[s.key] ?? 0}</p>
-                  <p className='text-[10px] text-foreground-muted uppercase tracking-wider mt-1'>{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Top products */}
-        {!loading && stats.topProducts.length > 0 && (
-          <div className='bg-surface border border-border p-6 mb-8'>
-            <h2 className='font-display text-xl font-semibold mb-5'>Top Products by Views</h2>
-            <div className='space-y-3'>
-              {stats.topProducts.map((p, i) => (
-                <div key={p.name} className='flex items-center justify-between py-2 border-b border-border last:border-0'>
-                  <div className='flex items-center gap-3'>
-                    <span className='text-xs text-foreground-muted w-5'>#{i + 1}</span>
-                    <span className='text-sm'>{p.name}</span>
-                  </div>
-                  <div className='flex items-center gap-6 text-xs text-foreground-muted'>
-                    <span>{p.viewCount} views</span>
-                    <span>{p.inquiryCount} inquiries</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Analytics charts */}
-        {!loading && stats.topProducts.length > 0 && (
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            {/* Views chart */}
-            <div className='bg-surface border border-border p-6'>
-              <h2 className='font-display text-lg font-semibold mb-6'>Views by Product</h2>
-              <ResponsiveContainer width='100%' height={260}>
-                <BarChart data={stats.topProducts} margin={{ top: 4, right: 8, left: -20, bottom: 60 }}>
-                  <XAxis dataKey='name' tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} angle={-35} textAnchor='end' interval={0} />
-                  <YAxis tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 12 }} cursor={{ fill: 'rgba(201,168,76,0.06)' }} />
-                  <Bar dataKey='viewCount' name='Views' radius={[2, 2, 0, 0]}>
-                    {stats.topProducts.map((_, i) => (
-                      <Cell key={i} fill={i === 0 ? 'var(--gold)' : 'var(--stone)'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Inquiries chart */}
-            <div className='bg-surface border border-border p-6'>
-              <h2 className='font-display text-lg font-semibold mb-6'>Inquiries by Product</h2>
-              <ResponsiveContainer width='100%' height={260}>
-                <BarChart data={stats.topProducts} margin={{ top: 4, right: 8, left: -20, bottom: 60 }}>
-                  <XAxis dataKey='name' tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} angle={-35} textAnchor='end' interval={0} />
-                  <YAxis tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} />
-                  <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 12 }} cursor={{ fill: 'rgba(201,168,76,0.06)' }} />
-                  <Bar dataKey='inquiryCount' name='Inquiries' radius={[2, 2, 0, 0]}>
-                    {stats.topProducts.map((_, i) => (
-                      <Cell key={i} fill={i === 0 ? '#e8c97a' : '#4a4840'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
+        ))}
       </div>
+
+      {/* Total views stat */}
+      <div className='bg-surface border border-border p-5 mb-10'>
+        <div className='flex items-center justify-between mb-1'>
+          <p className='text-xs text-foreground-muted uppercase tracking-wider'>Total Product Views</p>
+          <HiEye size={16} className='text-gold' />
+        </div>
+        <p className={`font-display text-4xl font-semibold text-gold ${loading ? 'opacity-20' : ''}`}>{loading ? '—' : stats.totalViews.toLocaleString()}</p>
+      </div>
+
+      {/* Quick actions */}
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10'>
+        <Link href='/admin/products' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
+          <HiCollection size={20} className='text-gold' />
+          <div>
+            <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Manage Products</p>
+            <p className='text-xs text-foreground-muted'>Add, edit, or hide materials</p>
+          </div>
+        </Link>
+        <Link href='/admin/projects' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
+          <HiPhotograph size={20} className='text-gold' />
+          <div>
+            <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Manage Projects</p>
+            <p className='text-xs text-foreground-muted'>Add client work & portfolio</p>
+          </div>
+        </Link>
+        <Link href='/admin/promotions' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
+          <HiSpeakerphone size={20} className='text-gold' />
+          <div>
+            <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Promotions</p>
+            <p className='text-xs text-foreground-muted'>Manage banners & offers</p>
+          </div>
+        </Link>
+        <Link href='/admin/jobs' className='flex items-center gap-3 p-5 border border-border hover:border-gold bg-surface transition-all duration-200 group'>
+          <HiClipboardList size={20} className='text-gold' />
+          <div>
+            <p className='text-sm font-semibold group-hover:text-gold transition-colors'>Jobs & Quotes</p>
+            <p className='text-xs text-foreground-muted'>Create and manage client quotes</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Revenue cards */}
+      {!loading && stats.totalJobs > 0 && (
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10'>
+          <div className='bg-surface border border-border p-6'>
+            <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Pipeline Value (TTD)</p>
+            <p className='font-display text-3xl font-semibold text-gold'>TTD {stats.pipelineValueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</p>
+            <p className='text-xs text-foreground-muted mt-1'>Active quotes + accepted + in progress</p>
+          </div>
+          <div className='bg-surface border border-border p-6'>
+            <p className='text-xs text-foreground-muted uppercase tracking-wider mb-2'>Total Revenue (TTD)</p>
+            <p className='font-display text-3xl font-semibold text-gold'>TTD {stats.totalRevenueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</p>
+            <p className='text-xs text-foreground-muted mt-1'>Completed + invoiced + paid jobs</p>
+          </div>
+        </div>
+      )}
+
+      {/* Job pipeline status breakdown */}
+      {!loading && stats.totalJobs > 0 && (
+        <div className='bg-surface border border-border p-6 mb-10'>
+          <h2 className='font-display text-lg font-semibold mb-5'>Job Pipeline</h2>
+          <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3'>
+            {[
+              { key: 'quote', label: 'Quote', color: 'text-blue-400' },
+              { key: 'accepted', label: 'Accepted', color: 'text-teal-400' },
+              { key: 'in_progress', label: 'In Progress', color: 'text-amber-400' },
+              { key: 'completed', label: 'Completed', color: 'text-emerald-400' },
+              { key: 'invoiced', label: 'Invoiced', color: 'text-purple-400' },
+              { key: 'paid', label: 'Paid', color: 'text-green-400' },
+              { key: 'cancelled', label: 'Cancelled', color: 'text-red-400' },
+            ].map((s) => (
+              <div key={s.key} className='text-center p-3 border border-border'>
+                <p className={`font-display text-2xl font-semibold ${s.color}`}>{stats.jobsByStatus[s.key] ?? 0}</p>
+                <p className='text-[10px] text-foreground-muted uppercase tracking-wider mt-1'>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Top products */}
+      {!loading && stats.topProducts.length > 0 && (
+        <div className='bg-surface border border-border p-6 mb-8'>
+          <h2 className='font-display text-xl font-semibold mb-5'>Top Products by Views</h2>
+          <div className='space-y-3'>
+            {stats.topProducts.map((p, i) => (
+              <div key={p.name} className='flex items-center justify-between py-2 border-b border-border last:border-0'>
+                <div className='flex items-center gap-3'>
+                  <span className='text-xs text-foreground-muted w-5'>#{i + 1}</span>
+                  <span className='text-sm'>{p.name}</span>
+                </div>
+                <div className='flex items-center gap-6 text-xs text-foreground-muted'>
+                  <span>{p.viewCount} views</span>
+                  <span>{p.inquiryCount} inquiries</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Analytics charts */}
+      {!loading && stats.topProducts.length > 0 && (
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          {/* Views chart */}
+          <div className='bg-surface border border-border p-6'>
+            <h2 className='font-display text-lg font-semibold mb-6'>Views by Product</h2>
+            <ResponsiveContainer width='100%' height={260}>
+              <BarChart data={stats.topProducts} margin={{ top: 4, right: 8, left: -20, bottom: 60 }}>
+                <XAxis dataKey='name' tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} angle={-35} textAnchor='end' interval={0} />
+                <YAxis tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} />
+                <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 12 }} cursor={{ fill: 'rgba(201,168,76,0.06)' }} />
+                <Bar dataKey='viewCount' name='Views' radius={[2, 2, 0, 0]}>
+                  {stats.topProducts.map((_, i) => (
+                    <Cell key={i} fill={i === 0 ? 'var(--gold)' : 'var(--stone)'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Inquiries chart */}
+          <div className='bg-surface border border-border p-6'>
+            <h2 className='font-display text-lg font-semibold mb-6'>Inquiries by Product</h2>
+            <ResponsiveContainer width='100%' height={260}>
+              <BarChart data={stats.topProducts} margin={{ top: 4, right: 8, left: -20, bottom: 60 }}>
+                <XAxis dataKey='name' tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} angle={-35} textAnchor='end' interval={0} />
+                <YAxis tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} />
+                <Tooltip contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 12 }} cursor={{ fill: 'rgba(201,168,76,0.06)' }} />
+                <Bar dataKey='inquiryCount' name='Inquiries' radius={[2, 2, 0, 0]}>
+                  {stats.topProducts.map((_, i) => (
+                    <Cell key={i} fill={i === 0 ? '#e8c97a' : '#4a4840'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* 6-month revenue trend */}
+      {!loading && revenueData.length > 0 && (
+        <div className='mt-6 bg-surface border border-border p-6'>
+          <h2 className='font-display text-lg font-semibold mb-6'>Revenue — Last 6 Months (TTD)</h2>
+          <ResponsiveContainer width='100%' height={220}>
+            <LineChart data={revenueData} margin={{ top: 4, right: 16, left: -8, bottom: 0 }}>
+              <CartesianGrid stroke='var(--border)' strokeDasharray='3 3' vertical={false} />
+              <XAxis dataKey='month' tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} />
+              <YAxis tick={{ fill: 'var(--foreground-muted)', fontSize: 11 }} tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`} />
+              <Tooltip
+                contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 12 }}
+                formatter={(value) => [`TTD ${Number(value).toLocaleString('en-TT', { minimumFractionDigits: 2 })}`, 'Revenue']}
+              />
+              <Line type='monotone' dataKey='revenueTTD' stroke='var(--gold)' strokeWidth={2} dot={{ fill: 'var(--gold)', r: 3 }} activeDot={{ r: 5 }} name='Revenue' />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }

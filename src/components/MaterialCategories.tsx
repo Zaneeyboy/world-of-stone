@@ -9,28 +9,28 @@ const categories = [
     name: 'Granite',
     slug: 'granite',
     desc: 'Extraordinarily durable, heat-resistant, and available in over 60 unique colorways.',
-    detail: 'Kitchen Tops · Feature Walls · Flooring',
+    detail: 'Kitchens · Flooring · Feature Walls',
     image: 'https://images.unsplash.com/photo-1558618047-3c8c76aa7a84?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Marble',
     slug: 'marble',
     desc: 'Timeless veined elegance — the material of choice for luxury interiors and architectural statements.',
-    detail: 'Vanities · Staircases · Pool Edges · Waterfall Edges',
+    detail: 'Bathrooms · Vanities · Staircases',
     image: 'https://images.unsplash.com/photo-1567538096621-38d2284b23ff?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Quartz',
     slug: 'quartz',
     desc: 'Precision-engineered for modern living — consistent colour and virtually zero maintenance.',
-    detail: 'Kitchen Tops · Backsplashes · Countertops',
+    detail: 'Countertops · Worksurfaces · Retail',
     image: 'https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Exotic Stone',
     slug: 'exotic',
     desc: 'Rare imported varieties — onyx, quartzite, and semi-precious slabs from around the world.',
-    detail: 'Feature Walls · Fountains · Bespoke Cladding',
+    detail: 'Feature Pieces · Bespoke Projects',
     image: 'https://images.unsplash.com/photo-1614292253389-bd2c1f89cd0e?auto=format&fit=crop&w=800&q=80',
   },
 ];
@@ -48,14 +48,11 @@ export default function MaterialCategories() {
             </div>
             <h2 className='font-display text-4xl md:text-5xl font-light text-foreground leading-tight'>Browse by Category</h2>
           </div>
-          <p className='text-foreground-muted text-sm leading-relaxed max-w-xs md:text-right'>
-            Each material type carries its own character. Discover the one that defines your space.
-          </p>
+          <p className='text-foreground-muted text-sm leading-relaxed max-w-xs md:text-right'>Each material type carries its own character. Discover the one that defines your space.</p>
         </div>
       </div>
 
       {/* Category grid */}
-      <div className='max-w-7xl mx-auto'>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
         {categories.map((cat, i) => (
           <motion.div
@@ -65,10 +62,7 @@ export default function MaterialCategories() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.45, delay: i * 0.08, ease: 'easeOut' }}
           >
-            <Link
-              href={`/catalog?material=${cat.slug}`}
-              className='group relative flex flex-col justify-end h-72 lg:h-96 overflow-hidden border-r border-t border-border last:border-r-0'
-            >
+            <Link href={`/catalog?material=${cat.slug}`} className='group relative flex flex-col justify-end h-72 lg:h-96 overflow-hidden border-r border-t border-border last:border-r-0'>
               {/* Stone image */}
               <Image
                 src={cat.image}
@@ -99,9 +93,9 @@ export default function MaterialCategories() {
             </Link>
           </motion.div>
         ))}
-      </div>      </div>
+      </div>
+
       <div className='border-t border-border' />
     </section>
   );
 }
-

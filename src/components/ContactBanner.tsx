@@ -35,10 +35,7 @@ export default function ContactBanner() {
         </p>
 
         <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
-          <Link
-            href='/contact'
-            className='flex items-center gap-3 px-8 py-4 bg-gold hover:bg-gold-light text-black font-semibold transition-colors duration-200 text-sm tracking-[0.12em] uppercase'
-          >
+          <Link href='/contact' className='flex items-center gap-3 px-8 py-4 bg-gold hover:bg-gold-light text-black font-semibold transition-colors duration-200 text-sm tracking-[0.12em] uppercase'>
             <span>Request Consultation</span>
             <HiArrowRight size={15} />
           </Link>
