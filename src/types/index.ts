@@ -19,6 +19,7 @@ export interface Product {
   hidden: boolean;
   availability: AvailabilityStatus;
   useCases: string[]; // e.g. ["kitchen", "flooring", "walls"]
+  countryOfOrigin?: string; // e.g. "Italy", "India", "Brazil"
   viewCount: number;
   inquiryCount: number;
   rankOrder?: number; // admin-defined ranking

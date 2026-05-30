@@ -52,6 +52,8 @@ function CatalogContent() {
     materialType: (searchParams.get('material') as MaterialType) || '',
   });
   const [sort, setSort] = useState<SortOption>((searchParams.get('sort') as SortOption) || 'newest');
+  const [colorTagFilter, setColorTagFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState('');
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -73,17 +75,43 @@ function CatalogContent() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const clearFilters = () => setFilters(defaultFilters);
+  const clearFilters = () => {
+    setFilters(defaultFilters);
+    setColorTagFilter('');
+    setCountryFilter('');
+  };
 
-  const hasFilters = Object.values(filters).some((v) => v !== '');
+  const hasFilters = Object.values(filters).some((v) => v !== '') || !!colorTagFilter || !!countryFilter;
+
+  const uniqueColorTags = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => p.colorTags?.forEach((t) => set.add(t)));
+    return Array.from(set).sort();
+  }, [products]);
+
+  const uniqueCountries = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => { if (p.countryOfOrigin) set.add(p.countryOfOrigin); });
+    return Array.from(set).sort();
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return products;
-    const q = searchQuery.toLowerCase();
-    return products.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.colorTags.some((t) => t.toLowerCase().includes(q)) || p.materialType.toLowerCase().includes(q),
-    );
-  }, [products, searchQuery]);
+    let result = products;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.colorTags?.some((t) => t.toLowerCase().includes(q)) ||
+          p.materialType.toLowerCase().includes(q) ||
+          (p.countryOfOrigin?.toLowerCase().includes(q) ?? false),
+      );
+    }
+    if (colorTagFilter) result = result.filter((p) => p.colorTags?.includes(colorTagFilter));
+    if (countryFilter) result = result.filter((p) => p.countryOfOrigin === countryFilter);
+    return result;
+  }, [products, searchQuery, colorTagFilter, countryFilter]);
 
   return (
     <>
@@ -131,9 +159,19 @@ function CatalogContent() {
               {filters.materialType && (
                 <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
                   {filters.materialType}
-                  <button onClick={() => updateFilter('materialType', '')}>
-                    <HiX size={12} />
-                  </button>
+                  <button onClick={() => updateFilter('materialType', '')}><HiX size={12} /></button>
+                </span>
+              )}
+              {colorTagFilter && (
+                <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
+                  {colorTagFilter}
+                  <button onClick={() => setColorTagFilter('')}><HiX size={12} /></button>
+                </span>
+              )}
+              {countryFilter && (
+                <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
+                  {countryFilter}
+                  <button onClick={() => setCountryFilter('')}><HiX size={12} /></button>
                 </span>
               )}
               {hasFilters && (
@@ -180,6 +218,51 @@ function CatalogContent() {
                 </div>
               </div>
 
+              {/* Color Tags */}
+              <div>
+                <label className='text-xs font-semibold uppercase tracking-wider text-gold mb-3 block'>Color</label>
+                {uniqueColorTags.length > 0 ? (
+                  <div className='flex flex-wrap gap-2'>
+                    {uniqueColorTags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => setColorTagFilter(colorTagFilter === tag ? '' : tag)}
+                        className={`px-2.5 py-1 text-xs border transition-colors ${
+                          colorTagFilter === tag
+                            ? 'border-gold bg-gold/15 text-gold'
+                            : 'border-border text-foreground-muted hover:border-gold/50 hover:text-foreground'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className='text-xs text-foreground-muted'>No color tags yet</p>
+                )}
+              </div>
+
+              {/* Country of Origin */}
+              <div>
+                <label className='text-xs font-semibold uppercase tracking-wider text-gold mb-3 block'>Country of Origin</label>
+                {uniqueCountries.length > 0 ? (
+                  <div className='flex flex-col gap-2'>
+                    <label className='flex items-center gap-2 cursor-pointer text-sm text-foreground-muted hover:text-foreground'>
+                      <input type='radio' name='country' checked={countryFilter === ''} onChange={() => setCountryFilter('')} className='accent-gold' />
+                      All Countries
+                    </label>
+                    {uniqueCountries.map((c) => (
+                      <label key={c} className='flex items-center gap-2 cursor-pointer text-sm text-foreground-muted hover:text-foreground'>
+                        <input type='radio' name='country' checked={countryFilter === c} onChange={() => setCountryFilter(c)} className='accent-gold' />
+                        {c}
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <p className='text-xs text-foreground-muted'>No country data yet</p>
+                )}
+              </div>
+
               {/* Availability */}
               <div>
                 <label className='text-xs font-semibold uppercase tracking-wider text-gold mb-3 block'>Availability</label>
@@ -201,32 +284,6 @@ function CatalogContent() {
                       {opt.label}
                     </label>
                   ))}
-                </div>
-              </div>
-
-              {/* Price range */}
-              <div className='lg:col-span-2'>
-                <label className='text-xs font-semibold uppercase tracking-wider text-gold mb-3 block'>Price Range (ZAR / m²)</label>
-                <div className='flex items-center gap-4'>
-                  <div className='flex-1'>
-                    <input
-                      type='number'
-                      placeholder='Min'
-                      value={filters.priceMin}
-                      onChange={(e) => updateFilter('priceMin', e.target.value ? Number(e.target.value) : '')}
-                      className='w-full bg-background border border-border text-foreground text-sm px-3 py-2 focus:outline-none focus:border-gold'
-                    />
-                  </div>
-                  <span className='text-foreground-muted text-sm'>—</span>
-                  <div className='flex-1'>
-                    <input
-                      type='number'
-                      placeholder='Max'
-                      value={filters.priceMax}
-                      onChange={(e) => updateFilter('priceMax', e.target.value ? Number(e.target.value) : '')}
-                      className='w-full bg-background border border-border text-foreground text-sm px-3 py-2 focus:outline-none focus:border-gold'
-                    />
-                  </div>
                 </div>
               </div>
             </div>

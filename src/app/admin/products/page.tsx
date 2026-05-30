@@ -16,7 +16,8 @@ const emptyForm = {
   materialType: 'granite' as MaterialType,
   color: '',
   colorTags: '',
-  price: '',
+  countryOfOrigin: '',
+  price: ''
   pricePerSqFt: '',
   pricePerSheet: '',
   priceUnit: 'per sq ft',
@@ -113,7 +114,8 @@ function ProductsContent() {
       materialType: product.materialType,
       color: product.color,
       colorTags: product.colorTags.join(', '),
-      price: product.price?.toString() ?? '',
+      countryOfOrigin: product.countryOfOrigin ?? '',
+      price: product.price?.toString() ?? ''
       pricePerSqFt: product.pricePerSqFt?.toString() ?? '',
       pricePerSheet: product.pricePerSheet?.toString() ?? '',
       priceUnit: product.priceUnit ?? 'per sq ft',
@@ -160,6 +162,7 @@ function ProductsContent() {
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
+        countryOfOrigin: form.countryOfOrigin.trim() || undefined,
         featured: form.featured,
         hidden: form.hidden,
         images: form.images,
@@ -278,7 +281,12 @@ function ProductsContent() {
 
                 <div>
                   <label className='admin-label'>Color Tags (comma-separated)</label>
-                  <input name='colorTags' value={form.colorTags} onChange={handleChange} className='admin-input' placeholder='black, gold, dark' />
+                  <input name='colorTags' value={form.colorTags} onChange={handleChange} className='admin-input' placeholder='black, gold, dark green' />
+                </div>
+
+                <div>
+                  <label className='admin-label'>Country of Origin</label>
+                  <input name='countryOfOrigin' value={form.countryOfOrigin} onChange={handleChange} className='admin-input' placeholder='Italy, India, Brazil…' />
                 </div>
 
                 <div>

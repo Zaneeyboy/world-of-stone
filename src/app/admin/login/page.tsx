@@ -50,48 +50,48 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
-        {/* Card */}
-        <div className='border border-border bg-surface p-8'>
-          <h1 className='font-display text-2xl font-semibold mb-6'>Sign In</h1>
+          {/* Card */}
+          <div className='border border-border bg-surface p-8'>
+            <h1 className='font-display text-2xl font-semibold mb-6'>Sign In</h1>
 
-          {error && <div className='mb-5 px-4 py-3 border border-red-900 bg-red-950/30 text-red-400 text-sm'>{error}</div>}
+            {error && <div className='mb-5 px-4 py-3 border border-red-900 bg-red-950/30 text-red-400 text-sm'>{error}</div>}
 
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div>
-              <label className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-2 block'>Email</label>
-              <input
-                type='email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete='email'
-                placeholder='admin@worldofstone.co.za'
-                className='w-full bg-background border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder-foreground-muted/50 transition-colors'
-              />
-            </div>
+            <form onSubmit={handleSubmit} className='space-y-4'>
+              <div>
+                <label className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-2 block'>Email</label>
+                <input
+                  type='email'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete='email'
+                  placeholder='admin@worldofstone.co.za'
+                  className='w-full bg-background border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder-foreground-muted/50 transition-colors'
+                />
+              </div>
 
-            <div>
-              <label className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-2 block'>Password</label>
-              <input
-                type='password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete='current-password'
-                placeholder='••••••••'
-                className='w-full bg-background border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder-foreground-muted/50 transition-colors'
-              />
-            </div>
+              <div>
+                <label className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-2 block'>Password</label>
+                <input
+                  type='password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete='current-password'
+                  placeholder='••••••••'
+                  className='w-full bg-background border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-gold placeholder-foreground-muted/50 transition-colors'
+                />
+              </div>
 
-            <button
-              type='submit'
-              disabled={loading}
-              className='w-full py-3 bg-gold hover:bg-gold-light text-background font-semibold text-sm tracking-wider uppercase transition-colors mt-2 disabled:opacity-60'
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-        </div>
+              <button
+                type='submit'
+                disabled={loading}
+                className='w-full py-3 bg-gold hover:bg-gold-light text-background font-semibold text-sm tracking-wider uppercase transition-colors mt-2 disabled:opacity-60'
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
       <Footer />
