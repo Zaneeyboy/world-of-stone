@@ -5,7 +5,7 @@ import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
 import { getAllProductsAdmin, updateProduct, deleteProduct, createProduct, generateSlug } from '@/lib/firestore';
 import type { Product, MaterialType, AvailabilityStatus } from '@/types';
-import { HiPencil, HiTrash, HiEye, HiEyeOff, HiPlus, HiX, HiSearch } from 'react-icons/hi';
+import { HiPencil, HiTrash, HiEye, HiEyeOff, HiPlus, HiX, HiSearch, HiChevronDown } from 'react-icons/hi';
 import ImageUploader from '@/components/ImageUploader';
 
 const MATERIAL_TYPES: MaterialType[] = ['granite', 'marble', 'quartz', 'quartzite', 'limestone', 'travertine', 'sandstone', 'slate', 'onyx', 'coral_stone', 'flagstone', 'other'];
@@ -24,6 +24,27 @@ const MATERIAL_LABELS: Record<MaterialType, string> = {
   flagstone: 'Flagstone',
   other: 'Other',
 };
+
+/** Styled select with a custom chevron arrow */
+function FormSelect({
+  name, value, onChange, children,
+}: {
+  name: string;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className='relative'>
+      <select name={name} value={value} onChange={onChange} className='admin-input appearance-none pr-10 cursor-pointer'>
+        {children}
+      </select>
+      <div className='pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted'>
+        <HiChevronDown size={15} />
+      </div>
+    </div>
+  );
+}
 
 /** Extract Cloudflare image ID from a delivery URL */
 function extractCfId(url: string): string | null {
@@ -298,22 +319,22 @@ function ProductsContent() {
                   </div>
                   <div>
                     <label className='admin-label'>Material Type *</label>
-                    <select name='materialType' value={form.materialType} onChange={handleChange} className='admin-input'>
+                    <FormSelect name='materialType' value={form.materialType} onChange={handleChange}>
                       {MATERIAL_TYPES.map((t) => (
                         <option key={t} value={t}>
                           {MATERIAL_LABELS[t]}
                         </option>
                       ))}
-                    </select>
+                    </FormSelect>
                   </div>
                   <div>
                     <label className='admin-label'>Availability</label>
-                    <select name='availability' value={form.availability} onChange={handleChange} className='admin-input'>
+                    <FormSelect name='availability' value={form.availability} onChange={handleChange}>
                       <option value='in_stock'>In Stock</option>
                       <option value='limited'>Limited Stock</option>
                       <option value='by_order'>By Order</option>
                       <option value='out_of_stock'>Out of Stock</option>
-                    </select>
+                    </FormSelect>
                   </div>
                   <div>
                     <label className='admin-label'>Primary Color</label>
@@ -394,8 +415,8 @@ function ProductsContent() {
                       <input type='number' name='rankOrder' value={form.rankOrder} onChange={handleChange} className='admin-input w-24 text-center' placeholder='0' />
                     </div>
                     <p className='text-xs text-foreground-muted mt-6 leading-relaxed'>
-                      Controls sort order in the catalog. A lower number appears earlier —
-                      set&nbsp;<strong className='text-foreground/70'>1</strong> to pin a product to the top, or leave at&nbsp;<strong className='text-foreground/70'>0</strong> for default (newest first).
+                      Controls sort order in the catalog. A lower number appears earlier — set&nbsp;<strong className='text-foreground/70'>1</strong> to pin a product to the top, or leave at&nbsp;
+                      <strong className='text-foreground/70'>0</strong> for default (newest first).
                     </p>
                   </div>
                 </div>
@@ -442,7 +463,8 @@ function ProductsContent() {
           <HiSearch size={14} className='absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted pointer-events-none' />
           <input className='admin-input pl-8' placeholder='Search products…' value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <select className='admin-input w-auto' value={filterMaterial} onChange={(e) => setFilterMaterial(e.target.value as MaterialType | '')}>
+        <div className='relative'>
+        <select className='admin-input w-auto appearance-none pr-8 cursor-pointer' value={filterMaterial} onChange={(e) => setFilterMaterial(e.target.value as MaterialType | '')}>
           <option value=''>All materials</option>
           {MATERIAL_TYPES.map((t) => (
             <option key={t} value={t}>
@@ -450,6 +472,10 @@ function ProductsContent() {
             </option>
           ))}
         </select>
+        <div className='pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-foreground-muted'>
+          <HiChevronDown size={13} />
+        </div>
+        </div>
         <div className='flex border border-border rounded overflow-hidden text-xs'>
           {(['all', 'visible', 'hidden'] as const).map((v) => (
             <button
@@ -595,6 +621,7 @@ function ProductsContent() {
         .admin-input { width: 100%; background: var(--background); border: 1px solid var(--border); color: var(--foreground); font-size: 14px; padding: 10px 14px; outline: none; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s; }
         .admin-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 12%, transparent); }
         .admin-input::placeholder { color: color-mix(in srgb, var(--foreground-muted) 45%, transparent); }
+        select.admin-input { appearance: none; }
         select.admin-input option { background: var(--surface); }
       `}</style>
     </div>
