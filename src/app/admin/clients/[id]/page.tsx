@@ -71,14 +71,9 @@ export default function ClientDetailPage() {
               <div className='flex items-start justify-between'>
                 <div>
                   <h2 className='text-xl font-semibold text-foreground'>{client.name}</h2>
-                  <p className='text-xs text-foreground-muted mt-0.5'>
-                    Client since {new Date(client.createdAt).toLocaleDateString('en-TT', { year: 'numeric', month: 'long', day: 'numeric' })}
-                  </p>
+                  <p className='text-xs text-foreground-muted mt-0.5'>Client since {new Date(client.createdAt).toLocaleDateString('en-TT', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
-                <Link
-                  href={`/admin/clients`}
-                  className='text-sm text-gold hover:text-gold-light transition-colors'
-                >
+                <Link href={`/admin/clients`} className='text-sm text-gold hover:text-gold-light transition-colors'>
                   Edit
                 </Link>
               </div>
@@ -146,12 +141,12 @@ export default function ClientDetailPage() {
                         <tr key={j.id} className='border-b border-border/50 hover:bg-surface/60 transition-colors'>
                           <td className='px-4 py-3 text-foreground-muted font-mono text-xs'>{j.jobNumber}</td>
                           <td className='px-4 py-3 text-foreground font-medium'>
-                            <Link href='/admin/jobs' className='hover:text-gold transition-colors'>{j.title}</Link>
+                            <Link href='/admin/jobs' className='hover:text-gold transition-colors'>
+                              {j.title}
+                            </Link>
                           </td>
                           <td className='px-4 py-3'>
-                            <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${STATUS_COLORS[j.status] ?? 'bg-gray-800 text-gray-400'}`}>
-                              {STATUS_LABELS[j.status] ?? j.status}
-                            </span>
+                            <span className={`px-2 py-0.5 rounded text-[11px] font-medium ${STATUS_COLORS[j.status] ?? 'bg-gray-800 text-gray-400'}`}>{STATUS_LABELS[j.status] ?? j.status}</span>
                           </td>
                           <td className='px-4 py-3 text-right text-foreground'>${j.totalAmountTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</td>
                           <td className='px-4 py-3 text-right text-foreground-muted'>${(j.totalAmountTTD / TTD_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>

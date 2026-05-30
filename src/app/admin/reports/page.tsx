@@ -11,9 +11,7 @@ import { HiDownload } from 'react-icons/hi';
 // ─── CSV helpers ──────────────────────────────────────────────────────────────
 
 function downloadCSV(filename: string, rows: string[][]): void {
-  const content = rows
-    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-    .join('\n');
+  const content = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -59,14 +57,7 @@ function exportProductsCSV(products: Product[]) {
 
 function exportClientsCSV(clients: Client[]) {
   const header = ['Name', 'Phone', 'Email', 'Address', 'Notes', 'Created'];
-  const rows = clients.map((c) => [
-    c.name,
-    c.phone,
-    c.email ?? '',
-    c.address ?? '',
-    c.notes ?? '',
-    new Date(c.createdAt).toLocaleDateString('en-TT'),
-  ]);
+  const rows = clients.map((c) => [c.name, c.phone, c.email ?? '', c.address ?? '', c.notes ?? '', new Date(c.createdAt).toLocaleDateString('en-TT')]);
   downloadCSV(`clients-${new Date().toISOString().slice(0, 10)}.csv`, [header, ...rows]);
 }
 
@@ -103,13 +94,7 @@ function ReportsContent() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [p, j, c, rev, stats] = await Promise.all([
-        getAllProductsAdmin(),
-        getJobs(),
-        getClients(),
-        getRevenueByMonth(6),
-        getJobStats(),
-      ]);
+      const [p, j, c, rev, stats] = await Promise.all([getAllProductsAdmin(), getJobs(), getClients(), getRevenueByMonth(6), getJobStats()]);
       setProducts(p);
       setJobs(j);
       setClients(c);
@@ -122,11 +107,11 @@ function ReportsContent() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
-  const topProducts = [...products]
-    .sort((a, b) => b.viewCount - a.viewCount)
-    .slice(0, 10);
+  const topProducts = [...products].sort((a, b) => b.viewCount - a.viewCount).slice(0, 10);
 
   const paidRevenue = jobStats?.totalRevenueTTD ?? 0;
   const pipeline = jobStats?.pipelineValueTTD ?? 0;
@@ -189,18 +174,20 @@ function ReportsContent() {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(jobStats?.byStatus ?? {}).sort(([, a], [, b]) => (b ?? 0) - (a ?? 0)).map(([status, count]) => {
-                    const statusJobs = jobs.filter((j) => j.status === status);
-                    const total = statusJobs.reduce((s, j) => s + j.totalAmountTTD, 0);
-                    return (
-                      <tr key={status} className='border-b border-border/50'>
-                        <td className='py-2 text-foreground'>{STATUS_LABELS[status] ?? status}</td>
-                        <td className='py-2 text-right text-foreground-muted'>{count}</td>
-                        <td className='py-2 text-right text-foreground'>${total.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</td>
-                        <td className='py-2 text-right text-foreground-muted'>${(total / TTD_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      </tr>
-                    );
-                  })}
+                  {Object.entries(jobStats?.byStatus ?? {})
+                    .sort(([, a], [, b]) => (b ?? 0) - (a ?? 0))
+                    .map(([status, count]) => {
+                      const statusJobs = jobs.filter((j) => j.status === status);
+                      const total = statusJobs.reduce((s, j) => s + j.totalAmountTTD, 0);
+                      return (
+                        <tr key={status} className='border-b border-border/50'>
+                          <td className='py-2 text-foreground'>{STATUS_LABELS[status] ?? status}</td>
+                          <td className='py-2 text-right text-foreground-muted'>{count}</td>
+                          <td className='py-2 text-right text-foreground'>${total.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</td>
+                          <td className='py-2 text-right text-foreground-muted'>${(total / TTD_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

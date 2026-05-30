@@ -45,10 +45,8 @@ export default function HeroSection() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className='font-display text-[3.2rem] md:text-[4.2rem] lg:text-[5rem] font-light leading-[1.02] tracking-[-0.01em] mb-6 text-white drop-shadow-[0_2px_20px_rgba(0,0,0,0.85)]'
           >
-            Imported Stone Surfaces{' '}
-            <span className='italic text-gold-light'>Crafted</span>
-            <br className='hidden md:block' /> for Exceptional{' '}
-            <span className='italic text-gold-light'>Spaces</span>
+            Imported Stone Surfaces <span className='italic text-gold-light'>Crafted</span>
+            <br className='hidden md:block' /> for Exceptional <span className='italic text-gold-light'>Spaces</span>
           </motion.h1>
 
           {/* Subtext */}
@@ -58,8 +56,7 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.22 }}
             className='text-[0.95rem] text-white/70 leading-[1.8] max-w-[480px] mb-12 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]'
           >
-            Over 20 years supplying premium granite, marble, quartz, and luxury stone materials for
-            residential and commercial projects across Trinidad & Tobago.
+            Over 20 years supplying premium granite, marble, quartz, and luxury stone materials for residential and commercial projects across Trinidad & Tobago.
           </motion.p>
 
           {/* CTAs */}

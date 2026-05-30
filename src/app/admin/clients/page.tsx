@@ -48,7 +48,9 @@ function ClientsContent() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   function jobsForClient(clientId: string) {
     return jobs.filter((j) => j.clientId === clientId);
@@ -115,12 +117,11 @@ function ClientsContent() {
       <div className='flex items-center justify-between'>
         <div>
           <h2 className='text-lg font-semibold text-foreground'>All Clients</h2>
-          <p className='text-sm text-foreground-muted mt-0.5'>{clients.length} client{clients.length !== 1 ? 's' : ''}</p>
+          <p className='text-sm text-foreground-muted mt-0.5'>
+            {clients.length} client{clients.length !== 1 ? 's' : ''}
+          </p>
         </div>
-        <button
-          onClick={openAdd}
-          className='flex items-center gap-2 px-4 py-2 bg-gold text-black text-sm font-semibold rounded hover:bg-gold-light transition-colors'
-        >
+        <button onClick={openAdd} className='flex items-center gap-2 px-4 py-2 bg-gold text-black text-sm font-semibold rounded hover:bg-gold-light transition-colors'>
           <HiPlus size={16} />
           Add Client
         </button>
@@ -159,11 +160,7 @@ function ClientsContent() {
                     <td className='px-4 py-3 text-right text-foreground-muted'>${(rev / TTD_USD).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                     <td className='px-4 py-3'>
                       <div className='flex items-center justify-end gap-2'>
-                        <Link
-                          href={`/admin/clients/${c.id}`}
-                          className='p-1.5 text-foreground-muted hover:text-gold transition-colors'
-                          title='View client'
-                        >
+                        <Link href={`/admin/clients/${c.id}`} className='p-1.5 text-foreground-muted hover:text-gold transition-colors' title='View client'>
                           <HiEye size={16} />
                         </Link>
                         <button onClick={() => openEdit(c)} className='p-1.5 text-foreground-muted hover:text-gold transition-colors' title='Edit'>
@@ -199,12 +196,7 @@ function ClientsContent() {
                   <HiUser size={13} className='inline mr-1' />
                   Name <span className='text-red-400'>*</span>
                 </label>
-                <input
-                  className='admin-input'
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder='e.g. John Smith'
-                />
+                <input className='admin-input' value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder='e.g. John Smith' />
               </div>
 
               <div>
@@ -212,12 +204,7 @@ function ClientsContent() {
                   <HiPhone size={13} className='inline mr-1' />
                   Phone <span className='text-red-400'>*</span>
                 </label>
-                <input
-                  className='admin-input'
-                  value={form.phone}
-                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                  placeholder='e.g. +1-868-000-0000'
-                />
+                <input className='admin-input' value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} placeholder='e.g. +1-868-000-0000' />
               </div>
 
               <div>
@@ -225,13 +212,7 @@ function ClientsContent() {
                   <HiMail size={13} className='inline mr-1' />
                   Email
                 </label>
-                <input
-                  type='email'
-                  className='admin-input'
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  placeholder='client@example.com'
-                />
+                <input type='email' className='admin-input' value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder='client@example.com' />
               </div>
 
               <div>
@@ -239,31 +220,17 @@ function ClientsContent() {
                   <HiLocationMarker size={13} className='inline mr-1' />
                   Address
                 </label>
-                <input
-                  className='admin-input'
-                  value={form.address}
-                  onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                  placeholder='Street, City'
-                />
+                <input className='admin-input' value={form.address} onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))} placeholder='Street, City' />
               </div>
 
               <div>
                 <label className='admin-label'>Notes</label>
-                <textarea
-                  className='admin-input resize-none'
-                  rows={3}
-                  value={form.notes}
-                  onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                  placeholder='Internal notes…'
-                />
+                <textarea className='admin-input resize-none' rows={3} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} placeholder='Internal notes…' />
               </div>
             </div>
 
             <div className='flex gap-3 pt-1'>
-              <button
-                onClick={() => setFormOpen(false)}
-                className='flex-1 py-2 border border-border text-foreground-muted rounded text-sm hover:border-foreground-muted transition-colors'
-              >
+              <button onClick={() => setFormOpen(false)} className='flex-1 py-2 border border-border text-foreground-muted rounded text-sm hover:border-foreground-muted transition-colors'>
                 Cancel
               </button>
               <button
@@ -285,16 +252,10 @@ function ClientsContent() {
             <h3 className='font-semibold text-foreground'>Delete Client?</h3>
             <p className='text-sm text-foreground-muted'>This only removes the client record. Their jobs will remain but will be unlinked.</p>
             <div className='flex gap-3'>
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className='flex-1 py-2 border border-border text-foreground-muted rounded text-sm hover:border-foreground-muted transition-colors'
-              >
+              <button onClick={() => setDeleteConfirm(null)} className='flex-1 py-2 border border-border text-foreground-muted rounded text-sm hover:border-foreground-muted transition-colors'>
                 Cancel
               </button>
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                className='flex-1 py-2 bg-red-600 text-white rounded text-sm font-semibold hover:bg-red-500 transition-colors'
-              >
+              <button onClick={() => handleDelete(deleteConfirm)} className='flex-1 py-2 bg-red-600 text-white rounded text-sm font-semibold hover:bg-red-500 transition-colors'>
                 Delete
               </button>
             </div>

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { HiMenu, HiX } from 'react-icons/hi';
+import { HiMenu, HiX, HiLockClosed } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
@@ -53,7 +53,10 @@ export default function Navbar() {
         </ul>
 
         {/* CTA */}
-        <div className='hidden md:flex items-center gap-4'>
+        <div className='hidden md:flex items-center gap-3'>
+          <Link href='/admin/login' className='p-2 text-white/20 hover:text-white/55 transition-colors' aria-label='Admin'>
+            <HiLockClosed size={15} />
+          </Link>
           <Link
             href='/contact'
             className='px-5 py-2 text-sm font-medium border border-gold/60 bg-gold/10 text-gold hover:bg-gold hover:text-black transition-all duration-200 tracking-wider uppercase'
@@ -92,6 +95,12 @@ export default function Navbar() {
                   className='inline-block mt-2 px-5 py-2 text-sm font-medium border border-gold/60 bg-gold/10 text-gold hover:bg-gold hover:text-black transition-all duration-200 tracking-wider uppercase'
                 >
                   Get a Quote
+                </Link>
+              </li>
+              <li className='pt-2 border-t border-border'>
+                <Link href='/admin/login' className='flex items-center gap-2 text-xs text-white/25 hover:text-white/50 transition-colors uppercase tracking-wider'>
+                  <HiLockClosed size={12} />
+                  Admin
                 </Link>
               </li>
             </ul>

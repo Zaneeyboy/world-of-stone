@@ -357,21 +357,14 @@ function ProductsContent() {
       <div className='flex flex-wrap items-center gap-3 mb-6'>
         <div className='relative flex-1 min-w-45'>
           <HiSearch size={14} className='absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted pointer-events-none' />
-          <input
-            className='admin-input pl-8'
-            placeholder='Search products…'
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <input className='admin-input pl-8' placeholder='Search products…' value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <select
-          className='admin-input w-auto'
-          value={filterMaterial}
-          onChange={(e) => setFilterMaterial(e.target.value as MaterialType | '')}
-        >
+        <select className='admin-input w-auto' value={filterMaterial} onChange={(e) => setFilterMaterial(e.target.value as MaterialType | '')}>
           <option value=''>All materials</option>
           {MATERIAL_TYPES.map((t) => (
-            <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+            <option key={t} value={t}>
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </option>
           ))}
         </select>
         <div className='flex border border-border rounded overflow-hidden text-xs'>
@@ -385,7 +378,9 @@ function ProductsContent() {
             </button>
           ))}
         </div>
-        <span className='text-xs text-foreground-muted ml-auto'>{filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}</span>
+        <span className='text-xs text-foreground-muted ml-auto'>
+          {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+        </span>
       </div>
 
       {/* Bulk action bar */}
@@ -393,12 +388,22 @@ function ProductsContent() {
         <div className='flex items-center gap-3 px-4 py-2.5 bg-surface border border-gold/30 rounded mb-4'>
           <span className='text-sm text-foreground-muted'>{selected.size} selected</span>
           <div className='flex gap-2 ml-auto'>
-            <button onClick={handleBulkShow} className='px-3 py-1.5 text-xs border border-border hover:border-gold text-foreground-muted hover:text-gold rounded transition-colors'>Show</button>
-            <button onClick={handleBulkHide} className='px-3 py-1.5 text-xs border border-border hover:border-gold text-foreground-muted hover:text-gold rounded transition-colors'>Hide</button>
-            <button onClick={handleBulkDelete} disabled={bulkDeleting} className='px-3 py-1.5 text-xs border border-red-800 text-red-400 hover:bg-red-900/30 rounded transition-colors disabled:opacity-50'>
+            <button onClick={handleBulkShow} className='px-3 py-1.5 text-xs border border-border hover:border-gold text-foreground-muted hover:text-gold rounded transition-colors'>
+              Show
+            </button>
+            <button onClick={handleBulkHide} className='px-3 py-1.5 text-xs border border-border hover:border-gold text-foreground-muted hover:text-gold rounded transition-colors'>
+              Hide
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              disabled={bulkDeleting}
+              className='px-3 py-1.5 text-xs border border-red-800 text-red-400 hover:bg-red-900/30 rounded transition-colors disabled:opacity-50'
+            >
               {bulkDeleting ? 'Deleting…' : 'Delete'}
             </button>
-            <button onClick={() => setSelected(new Set())} className='px-3 py-1.5 text-xs text-foreground-muted hover:text-foreground transition-colors'>Clear</button>
+            <button onClick={() => setSelected(new Set())} className='px-3 py-1.5 text-xs text-foreground-muted hover:text-foreground transition-colors'>
+              Clear
+            </button>
           </div>
         </div>
       )}
