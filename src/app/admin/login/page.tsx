@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { HiArrowLeft } from 'react-icons/hi';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -27,16 +31,24 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-background px-6'>
-      <div className='w-full max-w-sm'>
-        {/* Logo */}
-        <div className='flex items-center gap-3 mb-10 justify-center'>
-          <span className='w-10 h-10 rounded bg-gold flex items-center justify-center text-background font-bold font-display text-lg'>W</span>
-          <div>
-            <p className='font-display text-xl font-semibold'>World of Stone</p>
-            <p className='text-xs text-foreground-muted uppercase tracking-widest'>Admin Portal</p>
+    <>
+      <Navbar />
+      <div className='min-h-screen flex items-center justify-center bg-background px-6 pt-24 pb-16'>
+        <div className='w-full max-w-sm'>
+          {/* Back link */}
+          <Link href='/' className='inline-flex items-center gap-2 text-xs text-foreground-muted hover:text-gold transition-colors uppercase tracking-widest mb-8'>
+            <HiArrowLeft size={14} />
+            Back to Site
+          </Link>
+
+          {/* Logo */}
+          <div className='flex items-center gap-3 mb-10'>
+            <span className='w-10 h-10 bg-gold flex items-center justify-center text-background font-bold font-display text-lg'>W</span>
+            <div>
+              <p className='font-display text-xl font-semibold'>World of Stone</p>
+              <p className='text-xs text-foreground-muted uppercase tracking-widest'>Admin Portal</p>
+            </div>
           </div>
-        </div>
 
         {/* Card */}
         <div className='border border-border bg-surface p-8'>
@@ -81,6 +93,7 @@ export default function AdminLoginPage() {
           </form>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }

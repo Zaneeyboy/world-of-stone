@@ -122,12 +122,7 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <p className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-0.5'>Location</p>
-                      <a
-                        href='https://maps.app.goo.gl/8q9uzZbqeAodc49x9'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-sm hover:text-gold transition-colors'
-                      >
+                      <a href='https://maps.app.goo.gl/8q9uzZbqeAodc49x9' target='_blank' rel='noopener noreferrer' className='text-sm hover:text-gold transition-colors'>
                         106 Bejucal Road, Trinidad
                       </a>
                       <p className='text-xs text-foreground-muted mt-0.5'>Mon–Fri 8am–5pm · Sat 9am–1pm</p>

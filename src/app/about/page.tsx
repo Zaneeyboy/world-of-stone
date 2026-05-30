@@ -6,7 +6,7 @@ import PageWrapper from '@/components/PageWrapper';
 
 export const metadata: Metadata = {
   title: 'About Us',
-  description: 'Learn about World of Stone — our story, experience, and commitment to premium stone materials for residential, commercial, and hospitality projects across Trinidad & Tobago.'
+  description: 'Learn about World of Stone — our story, experience, and commitment to premium stone materials for residential, commercial, and hospitality projects across Trinidad & Tobago.',
 };
 
 const milestones = [
