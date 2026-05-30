@@ -15,10 +15,14 @@ const MATERIAL_TYPES: { value: MaterialType; label: string }[] = [
   { value: 'granite', label: 'Granite' },
   { value: 'marble', label: 'Marble' },
   { value: 'quartz', label: 'Quartz' },
+  { value: 'quartzite', label: 'Quartzite' },
   { value: 'limestone', label: 'Limestone' },
   { value: 'travertine', label: 'Travertine' },
   { value: 'sandstone', label: 'Sandstone' },
   { value: 'slate', label: 'Slate' },
+  { value: 'onyx', label: 'Onyx' },
+  { value: 'coral_stone', label: 'Coral Stone' },
+  { value: 'flagstone', label: 'Flagstone' },
   { value: 'other', label: 'Other' },
 ];
 
