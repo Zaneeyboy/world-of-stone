@@ -128,7 +128,7 @@ export async function incrementProductInquiry(productId: string): Promise<void> 
 export async function getAllProductsAdmin(): Promise<Product[]> {
   const q = query(collection(db, PRODUCTS), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => mapProduct(d.id, d.data()));
+  return snap.docs.map((d) => mapProduct(d.id, d.data())).filter((p) => !p.deleted);
 }
 
 export async function createProduct(data: Omit<Product, 'id' | 'createdAt' | 'updatedAt' | 'viewCount' | 'inquiryCount'>): Promise<string> {
@@ -148,7 +148,8 @@ export async function updateProduct(id: string, data: Partial<Omit<Product, 'id'
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  await deleteDoc(doc(db, PRODUCTS, id));
+  // Soft-delete: hide from all UI, preserve Firestore record for audit trail
+  await updateDoc(doc(db, PRODUCTS, id), { deleted: true, hidden: true, updatedAt: serverTimestamp() });
 }
 
 // ─── Projects ──────────────────────────────────────────────────────────────────

@@ -91,7 +91,9 @@ function CatalogContent() {
 
   const uniqueCountries = useMemo(() => {
     const set = new Set<string>();
-    products.forEach((p) => { if (p.countryOfOrigin) set.add(p.countryOfOrigin); });
+    products.forEach((p) => {
+      if (p.countryOfOrigin) set.add(p.countryOfOrigin);
+    });
     return Array.from(set).sort();
   }, [products]);
 
@@ -159,19 +161,25 @@ function CatalogContent() {
               {filters.materialType && (
                 <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
                   {filters.materialType}
-                  <button onClick={() => updateFilter('materialType', '')}><HiX size={12} /></button>
+                  <button onClick={() => updateFilter('materialType', '')}>
+                    <HiX size={12} />
+                  </button>
                 </span>
               )}
               {colorTagFilter && (
                 <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
                   {colorTagFilter}
-                  <button onClick={() => setColorTagFilter('')}><HiX size={12} /></button>
+                  <button onClick={() => setColorTagFilter('')}>
+                    <HiX size={12} />
+                  </button>
                 </span>
               )}
               {countryFilter && (
                 <span className='flex items-center gap-1 px-3 py-1 bg-gold/10 border border-gold/30 text-gold text-xs'>
                   {countryFilter}
-                  <button onClick={() => setCountryFilter('')}><HiX size={12} /></button>
+                  <button onClick={() => setCountryFilter('')}>
+                    <HiX size={12} />
+                  </button>
                 </span>
               )}
               {hasFilters && (
@@ -228,9 +236,7 @@ function CatalogContent() {
                         key={tag}
                         onClick={() => setColorTagFilter(colorTagFilter === tag ? '' : tag)}
                         className={`px-2.5 py-1 text-xs border transition-colors ${
-                          colorTagFilter === tag
-                            ? 'border-gold bg-gold/15 text-gold'
-                            : 'border-border text-foreground-muted hover:border-gold/50 hover:text-foreground'
+                          colorTagFilter === tag ? 'border-gold bg-gold/15 text-gold' : 'border-border text-foreground-muted hover:border-gold/50 hover:text-foreground'
                         }`}
                       >
                         {tag}

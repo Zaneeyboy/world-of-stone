@@ -10,6 +10,20 @@ import ImageUploader from '@/components/ImageUploader';
 
 const MATERIAL_TYPES: MaterialType[] = ['granite', 'marble', 'quartz', 'limestone', 'travertine', 'sandstone', 'slate', 'other'];
 
+/** Extract Cloudflare image ID from a delivery URL */
+function extractCfId(url: string): string | null {
+  const match = url.match(/imagedelivery\.net\/[^/]+\/([a-zA-Z0-9_-]+)/);
+  return match?.[1] ?? null;
+}
+
+/** Fire-and-forget delete of all CF images for a set of delivery URLs */
+async function deleteCfImages(imageUrls: string[]): Promise<void> {
+  const ids = imageUrls.map(extractCfId).filter(Boolean) as string[];
+  await Promise.allSettled(
+    ids.map((id) => fetch(`/api/upload?id=${encodeURIComponent(id)}`, { method: 'DELETE' })),
+  );
+}
+
 const emptyForm = {
   name: '',
   description: '',
@@ -196,6 +210,8 @@ function ProductsContent() {
   };
 
   const handleDelete = async (id: string) => {
+    const product = products.find((p) => p.id === id);
+    if (product?.images?.length) await deleteCfImages(product.images);
     await deleteProduct(id);
     setDeleteConfirm(null);
     await loadProducts();
@@ -217,6 +233,8 @@ function ProductsContent() {
     if (!confirm(`Delete ${selected.size} product${selected.size !== 1 ? 's' : ''}? This cannot be undone.`)) return;
     setBulkDeleting(true);
     try {
+      const toDelete = products.filter((p) => selected.has(p.id));
+      await Promise.allSettled(toDelete.map((p) => deleteCfImages(p.images ?? [])));
       await Promise.all([...selected].map((id) => deleteProduct(id)));
       setSelected(new Set());
       await loadProducts();
@@ -344,7 +362,7 @@ function ProductsContent() {
                 </div>
 
                 <div className='sm:col-span-2'>
-                  <ImageUploader label='Product Images (first is main image)' value={form.images} onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))} />
+                  <ImageUploader label='Product Images — max 3 (first is main image)' value={form.images} onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))} maxImages={3} />
                 </div>
               </div>
 

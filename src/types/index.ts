@@ -17,6 +17,7 @@ export interface Product {
   images: string[];
   featured: boolean;
   hidden: boolean;
+  deleted?: boolean; // soft-delete flag — excluded from all UI queries
   availability: AvailabilityStatus;
   useCases: string[]; // e.g. ["kitchen", "flooring", "walls"]
   countryOfOrigin?: string; // e.g. "Italy", "India", "Brazil"

@@ -10,13 +10,15 @@ export async function POST(_req: NextRequest) {
 
   const url = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v2/direct_upload`;
 
+  const body = new FormData();
+  body.append('metadata', JSON.stringify({ folder: 'world-of-stone/products' }));
+
   const res = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${API_TOKEN}`,
     },
-    // Empty body — Cloudflare generates a one-time upload URL
-    body: new FormData(),
+    body,
   });
 
   if (!res.ok) {
@@ -32,4 +34,31 @@ export async function POST(_req: NextRequest) {
   }
 
   return NextResponse.json({ uploadURL: json.result.uploadURL, id: json.result.id });
+}
+
+export async function DELETE(req: NextRequest) {
+  if (!ACCOUNT_ID || !API_TOKEN) {
+    return NextResponse.json({ error: 'Cloudflare credentials not configured' }, { status: 500 });
+  }
+
+  const imageId = req.nextUrl.searchParams.get('id');
+
+  // Validate ID format to prevent injection — CF image IDs are alphanumeric + hyphen
+  if (!imageId || !/^[a-zA-Z0-9_-]+$/.test(imageId)) {
+    return NextResponse.json({ error: 'Invalid or missing image id' }, { status: 400 });
+  }
+
+  const cfUrl = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v1/${imageId}`;
+  const res = await fetch(cfUrl, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${API_TOKEN}` },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('Cloudflare image delete error:', text);
+    return NextResponse.json({ error: 'Failed to delete image from Cloudflare' }, { status: 502 });
+  }
+
+  return NextResponse.json({ success: true });
 }
