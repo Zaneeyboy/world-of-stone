@@ -8,11 +8,7 @@ import type { Product, MaterialType, AvailabilityStatus } from '@/types';
 import { HiPencil, HiTrash, HiEye, HiEyeOff, HiPlus, HiX, HiSearch } from 'react-icons/hi';
 import ImageUploader from '@/components/ImageUploader';
 
-const MATERIAL_TYPES: MaterialType[] = [
-  'granite', 'marble', 'quartz', 'quartzite',
-  'limestone', 'travertine', 'sandstone', 'slate',
-  'onyx', 'coral_stone', 'flagstone', 'other',
-];
+const MATERIAL_TYPES: MaterialType[] = ['granite', 'marble', 'quartz', 'quartzite', 'limestone', 'travertine', 'sandstone', 'slate', 'onyx', 'coral_stone', 'flagstone', 'other'];
 
 const MATERIAL_LABELS: Record<MaterialType, string> = {
   granite: 'Granite',
@@ -38,9 +34,7 @@ function extractCfId(url: string): string | null {
 /** Fire-and-forget delete of all CF images for a set of delivery URLs */
 async function deleteCfImages(imageUrls: string[]): Promise<void> {
   const ids = imageUrls.map(extractCfId).filter(Boolean) as string[];
-  await Promise.allSettled(
-    ids.map((id) => fetch(`/api/upload?id=${encodeURIComponent(id)}`, { method: 'DELETE' })),
-  );
+  await Promise.allSettled(ids.map((id) => fetch(`/api/upload?id=${encodeURIComponent(id)}`, { method: 'DELETE' })));
 }
 
 const emptyForm = {
@@ -274,24 +268,30 @@ function ProductsContent() {
       </div>
       {/* Product form modal */}
       {formOpen && (
-        <div className='fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/80 backdrop-blur-sm p-4'>
-          <div className='w-full max-w-3xl bg-surface border border-border my-8'>
+        <div className='fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-background/85 backdrop-blur-md p-4'>
+          <div className='w-full max-w-3xl bg-surface border border-border/60 my-8 rounded-2xl shadow-2xl shadow-black/70 overflow-hidden'>
+            {/* Gold shimmer line */}
+            <div className='h-px bg-linear-to-r from-transparent via-gold/40 to-transparent' />
+
             {/* Modal header */}
-            <div className='flex items-center justify-between px-6 py-4 border-b border-border bg-background/40'>
+            <div className='flex items-center justify-between px-6 py-5 border-b border-border/60 bg-linear-to-br from-surface to-background/50'>
               <div>
                 <h2 className='font-display text-xl font-semibold'>{editingId ? 'Edit Product' : 'New Product'}</h2>
                 <p className='text-xs text-foreground-muted mt-0.5'>Fill in the details below to {editingId ? 'update this' : 'add a new'} product.</p>
               </div>
-              <button onClick={() => setFormOpen(false)} className='w-8 h-8 flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-white/5 rounded transition-colors'>
-                <HiX size={18} />
+              <button
+                onClick={() => setFormOpen(false)}
+                className='w-9 h-9 flex items-center justify-center text-foreground-muted hover:text-foreground bg-white/5 hover:bg-white/10 rounded-xl transition-all'
+              >
+                <HiX size={17} />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className='divide-y divide-border'>
+            <form onSubmit={handleSave} className='divide-y divide-border/50'>
               {/* ── Basic Details ── */}
-              <div className='px-6 py-5 space-y-4'>
+              <div className='px-6 py-6 space-y-4'>
                 <p className='text-[10px] text-gold uppercase tracking-[0.18em] font-semibold'>Basic Details</p>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                <div className='bg-white/2 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 gap-4'>
                   <div className='sm:col-span-2'>
                     <label className='admin-label'>Product Name *</label>
                     <input name='name' value={form.name} onChange={handleChange} required className='admin-input' placeholder='Black Galaxy Granite' />
@@ -300,7 +300,9 @@ function ProductsContent() {
                     <label className='admin-label'>Material Type *</label>
                     <select name='materialType' value={form.materialType} onChange={handleChange} className='admin-input'>
                       {MATERIAL_TYPES.map((t) => (
-                        <option key={t} value={t}>{MATERIAL_LABELS[t]}</option>
+                        <option key={t} value={t}>
+                          {MATERIAL_LABELS[t]}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -323,25 +325,22 @@ function ProductsContent() {
                   </div>
                   <div className='sm:col-span-2'>
                     <label className='admin-label'>
-                      Color Tags{' '}
-                      <span className='text-foreground-muted font-normal normal-case tracking-normal'>— comma-separated</span>
+                      Color Tags <span className='text-foreground-muted font-normal normal-case tracking-normal'>— comma-separated</span>
                     </label>
                     <input name='colorTags' value={form.colorTags} onChange={handleChange} className='admin-input' placeholder='black, gold, dark, veined' />
                   </div>
                   <div className='sm:col-span-2'>
                     <label className='admin-label'>
-                      Use Cases{' '}
-                      <span className='text-foreground-muted font-normal normal-case tracking-normal'>— comma-separated</span>
+                      Use Cases <span className='text-foreground-muted font-normal normal-case tracking-normal'>— comma-separated</span>
                     </label>
                     <input name='useCases' value={form.useCases} onChange={handleChange} className='admin-input' placeholder='kitchen countertops, flooring, wall cladding, bathroom' />
                   </div>
                   <div className='sm:col-span-2'>
-                    <label className='admin-label'>Description *</label>
+                    <label className='admin-label'>Description</label>
                     <textarea
                       name='description'
                       value={form.description}
                       onChange={handleChange}
-                      required
                       rows={3}
                       className='admin-input resize-none'
                       placeholder="Describe the stone's finish, veining pattern, and best applications…"
@@ -351,9 +350,9 @@ function ProductsContent() {
               </div>
 
               {/* ── Pricing ── */}
-              <div className='px-6 py-5 space-y-4'>
+              <div className='px-6 py-6 space-y-4'>
                 <p className='text-[10px] text-gold uppercase tracking-[0.18em] font-semibold'>Pricing (TTD)</p>
-                <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
+                <div className='bg-white/2 rounded-xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-4'>
                   <div>
                     <label className='admin-label'>Per Sq Ft</label>
                     <input type='number' name='pricePerSqFt' value={form.pricePerSqFt} onChange={handleChange} className='admin-input' placeholder='120' />
@@ -373,44 +372,62 @@ function ProductsContent() {
                 </div>
               </div>
 
-              {/* ── Visibility & Ranking ── */}
-              <div className='px-6 py-5 space-y-4'>
-                <p className='text-[10px] text-gold uppercase tracking-[0.18em] font-semibold'>Visibility &amp; Ranking</p>
-                <div className='flex flex-wrap items-center gap-6'>
-                  <label className='flex items-center gap-2 cursor-pointer text-sm select-none'>
-                    <input type='checkbox' name='featured' checked={form.featured} onChange={handleChange} className='accent-gold w-4 h-4' />
-                    <span>Featured</span>
-                    <span className='text-foreground-muted text-xs'>(shown on homepage)</span>
-                  </label>
-                  <label className='flex items-center gap-2 cursor-pointer text-sm select-none'>
-                    <input type='checkbox' name='hidden' checked={form.hidden} onChange={handleChange} className='accent-gold w-4 h-4' />
-                    <span>Hidden</span>
-                    <span className='text-foreground-muted text-xs'>(invisible to public)</span>
-                  </label>
-                  <div className='flex items-center gap-2 ml-auto'>
-                    <label className='admin-label mb-0'>Rank Order</label>
-                    <input type='number' name='rankOrder' value={form.rankOrder} onChange={handleChange} className='admin-input w-20 text-center' placeholder='0' />
+              {/* ── Visibility & Display Priority ── */}
+              <div className='px-6 py-6 space-y-4'>
+                <p className='text-[10px] text-gold uppercase tracking-[0.18em] font-semibold'>Visibility &amp; Display Priority</p>
+                <div className='bg-white/2 rounded-xl p-4 space-y-4'>
+                  <div className='flex flex-wrap items-center gap-5'>
+                    <label className='flex items-center gap-2.5 cursor-pointer text-sm select-none'>
+                      <input type='checkbox' name='featured' checked={form.featured} onChange={handleChange} className='accent-gold w-4 h-4 rounded' />
+                      <span>Featured</span>
+                      <span className='text-foreground-muted text-xs'>(shown on homepage)</span>
+                    </label>
+                    <label className='flex items-center gap-2.5 cursor-pointer text-sm select-none'>
+                      <input type='checkbox' name='hidden' checked={form.hidden} onChange={handleChange} className='accent-gold w-4 h-4 rounded' />
+                      <span>Hidden</span>
+                      <span className='text-foreground-muted text-xs'>(invisible to public)</span>
+                    </label>
+                  </div>
+                  <div className='flex items-start gap-3 pt-1 border-t border-border/40'>
+                    <div>
+                      <label className='admin-label mb-1'>Display Priority</label>
+                      <input type='number' name='rankOrder' value={form.rankOrder} onChange={handleChange} className='admin-input w-24 text-center' placeholder='0' />
+                    </div>
+                    <p className='text-xs text-foreground-muted mt-6 leading-relaxed'>
+                      Controls sort order in the catalog. A lower number appears earlier —
+                      set&nbsp;<strong className='text-foreground/70'>1</strong> to pin a product to the top, or leave at&nbsp;<strong className='text-foreground/70'>0</strong> for default (newest first).
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* ── Images ── */}
-              <div className='px-6 py-5 space-y-4'>
+              <div className='px-6 py-6 space-y-4'>
                 <p className='text-[10px] text-gold uppercase tracking-[0.18em] font-semibold'>Images</p>
-                <ImageUploader
-                  label='Up to 3 images — the first is used as the main display image'
-                  value={form.images}
-                  onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))}
-                  maxImages={3}
-                />
+                <div className='bg-white/2 rounded-xl p-4'>
+                  <ImageUploader
+                    label='Up to 3 images — the first is used as the main display image'
+                    value={form.images}
+                    onChange={(urls) => setForm((prev) => ({ ...prev, images: urls }))}
+                    maxImages={3}
+                  />
+                </div>
               </div>
 
               {/* ── Actions ── */}
-              <div className='flex gap-3 px-6 py-4 bg-background/30'>
-                <button type='submit' disabled={saving} className='px-7 py-2.5 bg-gold hover:bg-gold-light text-background text-sm font-semibold tracking-wide transition-colors disabled:opacity-60'>
+              <div className='flex gap-3 px-6 py-5 bg-background/30'>
+                <button
+                  type='submit'
+                  disabled={saving}
+                  className='px-7 py-2.5 bg-gold hover:bg-gold-light text-background text-sm font-semibold tracking-wide rounded-lg transition-all shadow-md shadow-gold/20 disabled:opacity-60'
+                >
                   {saving ? 'Saving…' : editingId ? 'Update Product' : 'Create Product'}
                 </button>
-                <button type='button' onClick={() => setFormOpen(false)} className='px-5 py-2.5 border border-border hover:border-foreground-muted/60 text-sm text-foreground-muted hover:text-foreground transition-colors'>
+                <button
+                  type='button'
+                  onClick={() => setFormOpen(false)}
+                  className='px-5 py-2.5 border border-border/60 hover:border-foreground-muted/40 text-sm text-foreground-muted hover:text-foreground rounded-lg transition-all'
+                >
                   Cancel
                 </button>
               </div>
@@ -575,9 +592,9 @@ function ProductsContent() {
       {/* Admin input styles via Tailwind @apply workaround */}
       <style>{`
         .admin-label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--foreground-muted); margin-bottom: 6px; }
-        .admin-input { width: 100%; background: var(--background); border: 1px solid var(--border); color: var(--foreground); font-size: 14px; padding: 10px 14px; outline: none; transition: border-color 0.15s; }
-        .admin-input:focus { border-color: var(--gold); }
-        .admin-input::placeholder { color: color-mix(in srgb, var(--foreground-muted) 50%, transparent); }
+        .admin-input { width: 100%; background: var(--background); border: 1px solid var(--border); color: var(--foreground); font-size: 14px; padding: 10px 14px; outline: none; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s; }
+        .admin-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 12%, transparent); }
+        .admin-input::placeholder { color: color-mix(in srgb, var(--foreground-muted) 45%, transparent); }
         select.admin-input option { background: var(--surface); }
       `}</style>
     </div>
