@@ -148,7 +148,7 @@ function ProductsContent() {
       color: product.color,
       colorTags: product.colorTags.join(', '),
       countryOfOrigin: product.countryOfOrigin ?? '',
-      price: product.price?.toString() ?? ''
+      price: product.price?.toString() ?? '',
       pricePerSqFt: product.pricePerSqFt?.toString() ?? '',
       pricePerSheet: product.pricePerSheet?.toString() ?? '',
       priceUnit: product.priceUnit ?? 'per sq ft',

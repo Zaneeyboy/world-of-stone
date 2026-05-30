@@ -163,7 +163,9 @@ function DashboardContent() {
           <div className='bg-surface border border-border p-6'>
             <div className='flex items-center justify-between mb-3'>
               <p className='text-[10px] text-foreground-muted uppercase tracking-widest'>Pipeline Value (TTD)</p>
-              <div className='w-7 h-7 flex items-center justify-center bg-gold/10'><HiCurrencyDollar size={14} className='text-gold' /></div>
+              <div className='w-7 h-7 flex items-center justify-center bg-gold/10'>
+                <HiCurrencyDollar size={14} className='text-gold' />
+              </div>
             </div>
             <p className='font-display text-3xl font-bold text-gold'>TTD {stats.pipelineValueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</p>
             <p className='text-xs text-foreground-muted mt-2'>Active quotes + accepted + in progress</p>
@@ -171,7 +173,9 @@ function DashboardContent() {
           <div className='bg-surface border border-border p-6'>
             <div className='flex items-center justify-between mb-3'>
               <p className='text-[10px] text-foreground-muted uppercase tracking-widest'>Total Revenue (TTD)</p>
-              <div className='w-7 h-7 flex items-center justify-center bg-gold/10'><HiCurrencyDollar size={14} className='text-gold' /></div>
+              <div className='w-7 h-7 flex items-center justify-center bg-gold/10'>
+                <HiCurrencyDollar size={14} className='text-gold' />
+              </div>
             </div>
             <p className='font-display text-3xl font-bold text-gold'>TTD {stats.totalRevenueTTD.toLocaleString('en-TT', { minimumFractionDigits: 2 })}</p>
             <p className='text-xs text-foreground-muted mt-2'>Completed + invoiced + paid jobs</p>
@@ -207,17 +211,19 @@ function DashboardContent() {
         <div className='bg-surface border border-border mb-8'>
           <div className='px-6 py-4 border-b border-border flex items-center justify-between'>
             <h2 className='font-display text-base font-semibold'>Top Products by Views</h2>
-            <Link href='/admin/products' className='text-xs text-gold hover:text-gold-light transition-colors flex items-center gap-1'>View all <HiChevronRight size={12} /></Link>
+            <Link href='/admin/products' className='text-xs text-gold hover:text-gold-light transition-colors flex items-center gap-1'>
+              View all <HiChevronRight size={12} />
+            </Link>
           </div>
           <div className='divide-y divide-border'>
             {stats.topProducts.map((p, i) => (
               <div key={p.name} className='flex items-center gap-4 px-6 py-3 hover:bg-white/2 transition-colors'>
-                <span className={`text-xs font-bold w-6 text-center tabular-nums shrink-0 ${
-                  i === 0 ? 'text-gold' : i === 1 ? 'text-foreground-muted' : 'text-foreground-muted/50'
-                }`}>#{i + 1}</span>
+                <span className={`text-xs font-bold w-6 text-center tabular-nums shrink-0 ${i === 0 ? 'text-gold' : i === 1 ? 'text-foreground-muted' : 'text-foreground-muted/50'}`}>#{i + 1}</span>
                 <span className='text-sm flex-1 truncate'>{p.name}</span>
                 <div className='flex items-center gap-5 text-xs text-foreground-muted shrink-0'>
-                  <span className='flex items-center gap-1'><HiEye size={12} /> {p.viewCount}</span>
+                  <span className='flex items-center gap-1'>
+                    <HiEye size={12} /> {p.viewCount}
+                  </span>
                   <span className='hidden sm:block'>{p.inquiryCount} inquiries</span>
                 </div>
               </div>

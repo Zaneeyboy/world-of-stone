@@ -1,16 +1,4 @@
-export type MaterialType =
-  | 'granite'
-  | 'marble'
-  | 'quartz'
-  | 'quartzite'
-  | 'limestone'
-  | 'travertine'
-  | 'sandstone'
-  | 'slate'
-  | 'onyx'
-  | 'coral_stone'
-  | 'flagstone'
-  | 'other';
+export type MaterialType = 'granite' | 'marble' | 'quartz' | 'quartzite' | 'limestone' | 'travertine' | 'sandstone' | 'slate' | 'onyx' | 'coral_stone' | 'flagstone' | 'other';
 
 export type AvailabilityStatus = 'in_stock' | 'limited' | 'out_of_stock' | 'by_order';
 
