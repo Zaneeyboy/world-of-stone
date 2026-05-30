@@ -110,9 +110,18 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Map placeholder */}
-              <div className='aspect-video border border-border bg-surface-2 flex items-center justify-center stone-texture'>
-                <span className='text-xs text-foreground-muted uppercase tracking-widest'>Map — Trinidad & Tobago</span>
+              {/* Map */}
+              <div className='aspect-video border border-border overflow-hidden'>
+                <iframe
+                  src='https://maps.google.com/maps?q=10.5712466,-61.4061419&z=17&output=embed'
+                  width='100%'
+                  height='100%'
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading='lazy'
+                  referrerPolicy='no-referrer-when-downgrade'
+                  title='World of Stone location'
+                />
               </div>
             </div>
           </div>

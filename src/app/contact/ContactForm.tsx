@@ -122,16 +122,32 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <p className='text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-0.5'>Location</p>
-                      <p className='text-sm'>Johannesburg, Gauteng, SA</p>
+                      <a
+                        href='https://maps.app.goo.gl/8q9uzZbqeAodc49x9'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-sm hover:text-gold transition-colors'
+                      >
+                        106 Bejucal Road, Trinidad
+                      </a>
                       <p className='text-xs text-foreground-muted mt-0.5'>Mon–Fri 8am–5pm · Sat 9am–1pm</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Map placeholder */}
-              <div className='aspect-video border border-border bg-surface-2 stone-texture flex items-center justify-center'>
-                <span className='text-xs text-foreground-muted uppercase tracking-widest'>Map Coming Soon</span>
+              {/* Map */}
+              <div className='aspect-video border border-border overflow-hidden'>
+                <iframe
+                  src='https://maps.google.com/maps?q=10.5712466,-61.4061419&z=17&output=embed'
+                  width='100%'
+                  height='100%'
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading='lazy'
+                  referrerPolicy='no-referrer-when-downgrade'
+                  title='World of Stone location'
+                />
               </div>
             </motion.div>
 
